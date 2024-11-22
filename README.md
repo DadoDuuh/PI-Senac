@@ -7,7 +7,7 @@ Trabalho de Projeto Integrador III desenvolvido como exigência para a obtençã
 
 Eduardo A., Itamar R., Pedro A., Pedro G., Pedro C., Sônia C. e Victor S.
 
-Este projeto propõe o a modelagem de um sistema de cadastro de uma grande universidade baseado no paradigma da orientação a objetos. Tomando como base a perspectiva da engenharia de software, são concebidos os objetos que representam a abstração do modelo de dados da solução proposta para o sistema utilizando a UML (Unified Modeling Language) e é projetado um protótipo funcional para o sistema utilizando a ferramenta Figma, editor gráfico de vetor e prototipagem.
+Este projeto propõe o a modelagem de um sistema de cadastro de uma grande universidade baseado no paradigma da orientação a objetos. Tomando como base a perspectiva da engenharia de software, são concebidos os objetos que representam a abstração do modelo de dados da solução proposta para o sistema utilizando a UML (_Unified Modeling Language_) e é projetado um protótipo funcional para o sistema utilizando a ferramenta Figma, editor gráfico de vetor e prototipagem.
 
 São Paulo, 2024
 
