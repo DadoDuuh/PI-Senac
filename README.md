@@ -20,4 +20,4 @@ A segunda entrega do PI é a prototipação do que foi formalizado na primeira e
 O protótipo deve refletir a modelagem realizada anteriormente.
 Segue abaixo, o protótipo realizado. Note que o usuário deverá clicar nos botões para fazer a navegação apropriada entre as telas desenvolvidas.
 
-[Clique aqui para visualizar o protótipo no figma](https://www.figma.com/proto/4AE1nKpXMYS2WlOJxPlAiJ/Modelagem-%7C-Senac-Grupo-01?node-id=103-504&node-type=canvas&t=07bUE8jsk5XxWwaY-1&scaling=scale-down&content-scaling=fixed&page-id=101%3A2&starting-point-node-id=103%3A504)
+[Clique aqui para visualizar o protótipo no figma](https://www.figma.com/proto/4AE1nKpXMYS2WlOJxPlAiJ/Modelagem-%7C-Senac-Grupo-01?node-id=101-2&t=Z66tCT6o2fuJBSru-1)
