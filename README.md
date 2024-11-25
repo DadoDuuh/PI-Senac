@@ -16,10 +16,7 @@ São Paulo, 2024
 
 <img width="2352" alt="Diagrama_Classe" src="https://github.com/user-attachments/assets/0f4a7bc1-c0f3-4c05-a9b9-bdd2ace3bad5">
 
-</br>
-A segunda entrega do PI é prototipação do que foi formalizado na primeira entrega, conforme foi apresentado no trecho acima.
+A segunda entrega do PI é a prototipação do que foi formalizado na primeira entrega, conforme foi apresentado no trecho acima.  
 O protótipo deve refletir a modelagem realizada anteriormente.
-</br>
-Clique aqui para visualizar o protótipo no figma:
-</br>
-*[Protótipo Figma](https://www.figma.com/proto/4AE1nKpXMYS2WlOJxPlAiJ/Modelagem-%7C-Senac-Grupo-01?node-id=103-504&node-type=canvas&t=07bUE8jsk5XxWwaY-1&scaling=scale-down&content-scaling=fixed&page-id=101%3A2&starting-point-node-id=103%3A504)*
+
+[Protótipo Figma](https://www.figma.com/proto/4AE1nKpXMYS2WlOJxPlAiJ/Modelagem-%7C-Senac-Grupo-01?node-id=103-504&node-type=canvas&t=07bUE8jsk5XxWwaY-1&scaling=scale-down&content-scaling=fixed&page-id=101%3A2&starting-point-node-id=103%3A504)
