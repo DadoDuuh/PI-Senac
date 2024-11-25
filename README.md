@@ -15,7 +15,7 @@ São Paulo, 2024
 
 
 <img width="2352" alt="Diagrama_Classe" src="https://github.com/user-attachments/assets/0f4a7bc1-c0f3-4c05-a9b9-bdd2ace3bad5">
-
+<p></p>
 A segunda entrega do PI é a prototipação do que foi formalizado na primeira entrega, conforme foi apresentado no trecho acima.  
 O protótipo deve refletir a modelagem realizada anteriormente.
 
