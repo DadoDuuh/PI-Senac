@@ -16,4 +16,4 @@ São Paulo, 2024
 
 <img width="2352" alt="Diagrama_Classe" src="https://github.com/user-attachments/assets/0f4a7bc1-c0f3-4c05-a9b9-bdd2ace3bad5">
 
-*[Protótipo Figma] https://www.figma.com/proto/4AE1nKpXMYS2WlOJxPlAiJ/Modelagem-%7C-Senac-Grupo-01?node-id=101-2&t=PDiNyj8UpebgEOCd-1*
+*[Protótipo Figma](https://www.figma.com/proto/4AE1nKpXMYS2WlOJxPlAiJ/Modelagem-%7C-Senac-Grupo-01?node-id=101-2&t=PDiNyj8UpebgEOCd-1)*
