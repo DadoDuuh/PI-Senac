@@ -1,22 +1,22 @@
-import { con } from './connection.js';
+import { pool } from './connection.js';
 
-
-export async function consultaRepository() {
-    const comando = ``
-
-    const [resposta] = await con.query(comando);
-    
-    return resposta[0];
+export async function listarConsultas() {
+    const [rows] = await pool.query('SELECT * FROM consultas');
+    return rows;
 }
 
-//EXEMPLO:>>>>>
-// 
-// pegar id do psicologo
-// export async function idPsicologoDenuncia(denuncia) {
-//     const comando = `select id_psicologo 
-//                         from tb_psicologo
-//                     where nm_psicologo = ? and ds_email = ?`
+export async function agendarConsulta(consulta) {
+    const [result] = await pool.query(
+        'INSERT INTO consultas (paciente_id, psicologo_id, data_hora) VALUES (?, ?, ?)',
+        [consulta.pacienteId, consulta.psicologoId, consulta.dataHora]
+    );
+    return result.insertId;
+}
 
-//     const [resposta] = await con.query(comando, [denuncia.nomePsicologo.trim(), denuncia.emailPsicologo.trim()]);
-//     return resposta[0];
-// }
+export async function getConsultasByUser(userId, isPsicologo) {
+    const query = isPsicologo
+        ? 'SELECT * FROM consultas WHERE psicologo_id = ?'
+        : 'SELECT * FROM consultas WHERE paciente_id = ?';
+    const [rows] = await pool.query(query, [userId]);
+    return rows;
+}
