@@ -1,14 +1,20 @@
-import { con } from './connection.js';
+import { pool } from './connection.js';
 
-
-export async function loginRepository() {
-    const comando = ``
-
-    const [resposta] = await con.query(comando);
-    
-    return resposta[0];
+export async function findUsuarioByEmail() {
+    const [rows] = await pool.query(
+        'SELECT * FROM tb_usuario WHERE ds_email = ?',
+        [email]
+    );
+    return rows[0];
 }
 
+export async function createUsuario(usuario) {
+    const [result] = await pool.query(
+        'INSERT INTO usuarios (nome, email, senha, cpf, telefone) VALUES (?, ?, ?, ?, ?)',
+        [usuario.nome, usuario.email, usuario.senha, usuario.cpf, usuario.telefone]
+    );
+    return result.insertId;
+}
 //EXEMPLO:>>>>>
 // 
 // pegar id do psicologo
