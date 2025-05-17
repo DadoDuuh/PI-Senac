@@ -13,3 +13,4 @@
 ### Quickstart:
 1. [como executar: subida de servidores, carga de _scripts_]
 2. [...]
+3. [Instalação das dependências: Acessar as pastas >site e >api e rodar o comando "npm i" em cada uma delas a partir do comando "cd" Ex: "cd site", "cd api"]
