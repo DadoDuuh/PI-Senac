@@ -1,6 +1,6 @@
 # PROJETO INTEGRADOR III: DESENVOLVIMENTO DE SISTEMA ORIENTADO A DISPOSITIVOS MÓVEIS E BASEADO NA WEB
 
-### Grupo 31:
+## Grupo 31:
 
 - Eduardo Cesar Silva de Avila
 - Felipe Dantas do Nascimento 
@@ -16,7 +16,7 @@
 - MySQL
 - Git
 
-### Quickstart:
+## Quickstart:
 
 1. Clonar o repositório: `git clone https://github.com/DadoDuuh/PI-Senac.git`
 2. Instalar as dependências no back end: `cd api` > `npm i`
