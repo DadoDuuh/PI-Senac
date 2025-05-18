@@ -4,7 +4,7 @@ import "./Cadastro.scss";
 
 export default function Cadastro() {
   const navigate = useNavigate();
-  const [isPsicologo, setisPsicologo] = useState(false);
+  const [isPsicologo, setIsPsicologo] = useState(false);
   const [formData, setFormData] = useState({
     name: "",
     email: "",
@@ -12,12 +12,14 @@ export default function Cadastro() {
     confirmPassword: "",
     phone: "",
     birthDate: "",
+    cpf: "",
     crp: "",
   });
 
   const irParaLogin = (e) => {
+    e.preventDefault();
     navigate("/login/usuario");
-  }
+  };
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -39,8 +41,13 @@ export default function Cadastro() {
   };
 
   const toggleUserType = () => {
-    setisPsicologo(!isPsicologo);
-    setFormData((prev) => ({ ...prev, crp: "" }));
+    setIsPsicologo(!isPsicologo);
+    // Limpa o campo que não será mais usado
+    setFormData((prev) => ({ 
+      ...prev, 
+      crp: isPsicologo ? "" : prev.crp,
+      cpf: !isPsicologo ? "" : prev.cpf 
+    }));
   };
 
   return (
@@ -143,26 +150,44 @@ export default function Cadastro() {
                 />
               </div>
             </div>
-          </div>
-
-          {isPsicologo && (
-            <div className="form-group">
-              <label htmlFor="crp" className="form-label">
-                CRP (Registro Profissional)
-              </label>
-              <input
-                type="text"
-                className="form-control input-field"
-                id="crp"
-                name="crp"
-                placeholder="Seu número de registro no CRP"
-                value={formData.crp}
-                onChange={handleChange}
-                required={isPsicologo}
-              />
-              <small className="text-muted">Formato: XX/XXXXXX</small>
+            <div className="col-md-6">
+              {!isPsicologo && (
+                <div className="form-group">
+                  <label htmlFor="cpf" className="form-label">
+                    CPF
+                  </label>
+                  <input
+                    type="text"
+                    className="form-control input-field"
+                    id="cpf"
+                    name="cpf"
+                    placeholder="000.000.000-00"
+                    value={formData.cpf}
+                    onChange={handleChange}
+                    required={!isPsicologo}
+                  />
+                </div>
+              )}
+              {isPsicologo && (
+                <div className="form-group">
+                  <label htmlFor="crp" className="form-label">
+                    CRP (Registro Profissional)
+                  </label>
+                  <input
+                    type="text"
+                    className="form-control input-field"
+                    id="crp"
+                    name="crp"
+                    placeholder="Seu número de registro no CRP"
+                    value={formData.crp}
+                    onChange={handleChange}
+                    required={isPsicologo}
+                  />
+                  <small className="text-muted">Formato: XX/XXXXXX</small>
+                </div>
+              )}
             </div>
-          )}
+          </div>
 
           <div className="form-group form-check mb-4">
             <input
