@@ -8,10 +8,14 @@ export default function Main(props) {
   const [scrolled, setScrolled] = useState(false);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
-  const isAuthRoute = ["/login", "/cadastro", "/paginaUsuario"].some((route) =>
-    location.pathname.startsWith(route)
-  );
+  const isAuthRoute = [
+    "/login",
+    "/cadastro",
+    "/paginaUsuario",
+    "/agendamentos",
+  ].some((route) => location.pathname.startsWith(route));
   const isUserPage = location.pathname.startsWith("/paginaUsuario");
+  const isAgendamentosPage = location.pathname.startsWith("/agendamentos");
 
   useEffect(() => {
     const handleScroll = () => {
@@ -20,6 +24,18 @@ export default function Main(props) {
     window.addEventListener("scroll", handleScroll);
     return () => window.removeEventListener("scroll", handleScroll);
   }, []);
+
+  const scrollToSection = (sectionId) => {
+    const element = document.getElementById(sectionId);
+    if (element) {
+      element.scrollIntoView({
+        behavior: "smooth",
+        block: "center",
+        inline: "nearest",
+      });
+    }
+    setMobileMenuOpen(false);
+  };
 
   const irParaLogin = (e) => {
     e.preventDefault();
@@ -38,7 +54,12 @@ export default function Main(props) {
 
   const irParaAgendamentos = (e) => {
     e.preventDefault();
-    navigate("/Agendamentos");
+    navigate("/agendamentos");
+  };
+
+    const irParaPaginaUsuario = (e) => {
+    e.preventDefault();
+    navigate("/paginaUsuario");
   };
 
   const toggleMobileMenu = () => {
@@ -55,48 +76,83 @@ export default function Main(props) {
           </div>
 
           {!isAuthRoute && (
-            <nav className="desktop-nav">
-              <NavLink
-                href="/"
-                text="Início"
-                active={location.pathname === "/"}
-              />
-              <NavLink text="Como Funciona" />
-              <NavLink text="Profissionais" />
-              <NavLink text="Depoimentos" />
-              <NavLink text="Sobre Nós" />
-            </nav>
+            <div className="desktop-nav">
+              <div
+                onClick={() =>
+                  location.pathname === "/"
+                    ? window.scrollTo(0, 0)
+                    : irParaHome()
+                }
+                className={`nav-link ${
+                  location.pathname === "/" ? "active" : ""
+                }`}
+              >
+                Início
+                <span className="nav-underline"></span>
+              </div>
+              <div
+                onClick={() => scrollToSection("como-funciona")}
+                className="nav-link"
+              >
+                Como Funciona
+                <span className="nav-underline"></span>
+              </div>
+              <div
+                onClick={() => scrollToSection("profissionais")}
+                className="nav-link"
+              >
+                Profissionais
+                <span className="nav-underline"></span>
+              </div>
+              <div
+                onClick={() => scrollToSection("depoimentos")}
+                className="nav-link"
+              >
+                Depoimentos
+                <span className="nav-underline"></span>
+              </div>
+              <div
+                onClick={() => scrollToSection("sobre")}
+                className="nav-link"
+              >
+                Sobre Nós
+                <span className="nav-underline"></span>
+              </div>
+            </div>
           )}
 
           <div className="action-buttons">
             {!isAuthRoute && (
-              <a
-                href=""
-                onClick={irParaCadastro}
-                className="btn btn-primary btn-cta"
-              >
+              <div onClick={irParaCadastro} className="btn btn-primary btn-cta">
                 Cadastrar
-              </a>
+              </div>
             )}
 
             {!isAuthRoute && (
-              <a
+              <div
                 onClick={irParaLogin}
-                href="#"
                 className="btn btn-outline-primary btn-login"
               >
                 Login
-              </a>
+              </div>
             )}
 
             {isUserPage && (
-              <a
-                href=""
+              <div
                 onClick={irParaAgendamentos}
                 className="btn btn-outline-primary btn-login"
               >
                 Meus Agendamentos
-              </a>
+              </div>
+            )}
+
+            {isAgendamentosPage && (
+              <div
+                onClick={irParaPaginaUsuario}
+                className="btn btn-outline-primary btn-login"
+              >
+                Agendar Consulta
+              </div>
             )}
 
             {!isAuthRoute && (
@@ -115,16 +171,45 @@ export default function Main(props) {
 
         {!isAuthRoute && (
           <div className={`mobile-menu ${mobileMenuOpen ? "open" : ""}`}>
-            <NavLink
-              href="/"
-              text="Início"
-              mobile
-              active={location.pathname === "/"}
-            />
-            <NavLink href="#como-funciona" text="Como Funciona" mobile />
-            <NavLink href="#profissionais" text="Profissionais" mobile />
-            <NavLink href="#depoimentos" text="Depoimentos" mobile />
-            <NavLink href="#sobre" text="Sobre Nós" mobile />
+            <div
+              onClick={() =>
+                location.pathname === "/" ? window.scrollTo(0, 0) : irParaHome()
+              }
+              className={`nav-link mobile-link ${
+                location.pathname === "/" ? "active" : ""
+              }`}
+            >
+              Início
+              <span className="nav-underline"></span>
+            </div>
+            <div
+              onClick={() => scrollToSection("como-funciona")}
+              className="nav-link mobile-link"
+            >
+              Como Funciona
+              <span className="nav-underline"></span>
+            </div>
+            <div
+              onClick={() => scrollToSection("profissionais")}
+              className="nav-link mobile-link"
+            >
+              Profissionais
+              <span className="nav-underline"></span>
+            </div>
+            <div
+              onClick={() => scrollToSection("depoimentos")}
+              className="nav-link mobile-link"
+            >
+              Depoimentos
+              <span className="nav-underline"></span>
+            </div>
+            <div
+              onClick={() => scrollToSection("sobre")}
+              className="nav-link mobile-link"
+            >
+              Sobre Nós
+              <span className="nav-underline"></span>
+            </div>
           </div>
         )}
       </header>
@@ -141,28 +226,34 @@ export default function Main(props) {
             </p>
           </div>
           <div className="social-links">
-            <SocialIcon href="#" icon="facebook-f" />
-            <SocialIcon href="#" icon="twitter" />
-            <SocialIcon href="#" icon="instagram" />
-            <SocialIcon href="#" icon="linkedin-in" />
+            <div
+              className="social-icon"
+              onClick={() => window.open("#", "_blank")}
+            >
+              <i className="fab fa-facebook-f"></i>
+            </div>
+            <div
+              className="social-icon"
+              onClick={() => window.open("#", "_blank")}
+            >
+              <i className="fab fa-twitter"></i>
+            </div>
+            <div
+              className="social-icon"
+              onClick={() => window.open("#", "_blank")}
+            >
+              <i className="fab fa-instagram"></i>
+            </div>
+            <div
+              className="social-icon"
+              onClick={() => window.open("#", "_blank")}
+            >
+              <i className="fab fa-linkedin-in"></i>
+            </div>
           </div>
         </div>
       </footer>
     </main>
-  );
-}
-
-function NavLink({ href, text, active = false, mobile = false }) {
-  return (
-    <a
-      href={href}
-      className={`nav-link ${active ? "active" : ""} ${
-        mobile ? "mobile-link" : ""
-      }`}
-    >
-      {text}
-      <span className="nav-underline"></span>
-    </a>
   );
 }
 

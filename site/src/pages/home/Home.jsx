@@ -23,9 +23,6 @@ function Home() {
                 >
                   Agendar Consulta
                 </a>
-                <a href="#" className="btn btn-outline-light fw-bold">
-                  Saiba Mais
-                </a>
               </div>
             </div>
             <div className="col-md-6 text-center">
@@ -39,7 +36,7 @@ function Home() {
         </div>
       </section>
 
-      <section className="py-5 bg-light">
+      <section className="py-5 bg-light" id="como-funciona">
         <div className="container text-center mb-5">
           <h2 className="fw-bold mb-3">Como Funciona</h2>
           <p className="lead text-secondary">
@@ -83,7 +80,7 @@ function Home() {
         </div>
       </section>
 
-      <section className="py-5">
+      <section className="py-5" id="profissionais">
         <div className="container text-center mb-5">
           <h2 className="fw-bold mb-3">Nossos Psicólogos Voluntários</h2>
           <p className="lead text-secondary">
@@ -169,7 +166,7 @@ function Home() {
         </div>
       </section>
 
-      <section className="py-5 bg-light">
+      <section className="py-5 bg-light" id="depoimentos">
         <div className="container text-center mb-5">
           <h2 className="fw-bold mb-3">Depoimentos</h2>
           <p className="lead text-secondary">
