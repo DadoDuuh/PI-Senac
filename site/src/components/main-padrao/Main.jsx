@@ -8,9 +8,10 @@ export default function Main(props) {
   const [scrolled, setScrolled] = useState(false);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
-  const isAuthRoute = ["/login", "/cadastro"].some((route) =>
+  const isAuthRoute = ["/login", "/cadastro", "/paginaUsuario"].some((route) =>
     location.pathname.startsWith(route)
   );
+  const isUserPage = location.pathname.startsWith("/paginaUsuario");
 
   useEffect(() => {
     const handleScroll = () => {
@@ -33,6 +34,11 @@ export default function Main(props) {
   const irParaHome = (e) => {
     e.preventDefault();
     navigate("/");
+  };
+
+  const irParaAgendamentos = (e) => {
+    e.preventDefault();
+    navigate("/Agendamentos");
   };
 
   const toggleMobileMenu = () => {
@@ -80,6 +86,16 @@ export default function Main(props) {
                 className="btn btn-outline-primary btn-login"
               >
                 Login
+              </a>
+            )}
+
+            {isUserPage && (
+              <a
+                href=""
+                onClick={irParaAgendamentos}
+                className="btn btn-outline-primary btn-login"
+              >
+                Meus Agendamentos
               </a>
             )}
 
