@@ -1,20 +1,29 @@
 import { pool } from './connection.js';
 
-export async function findUsuarioByEmail() {
+export async function findUsuarioByEmail(email) {
     const [rows] = await pool.query(
-        'SELECT * FROM tb_usuario WHERE ds_email = ?',
+        'SELECT * FROM usuario WHERE email = ?',
         [email]
     );
     return rows[0];
 }
 
-export async function createUsuario(usuario) {
-    const [result] = await pool.query(
-        'INSERT INTO usuarios (nome, email, senha, cpf, telefone) VALUES (?, ?, ?, ?, ?)',
-        [usuario.nome, usuario.email, usuario.senha, usuario.cpf, usuario.telefone]
-    );
-    return result.insertId;
+export async function createUsuario(nome, email, senha, cpf, telefone) {
+  const [result] = await pool.query(
+    'INSERT INTO usuario (nome, email, senha, cpf, telefone) VALUES (?, ?, ?, ?, ?)',
+    [nome, email, senha, cpf, telefone]
+  );
+  return result.insertId;
 }
+
+export async function findUsuarioById(id) {
+    const [rows] = await pool.query(
+        'SELECT * FROM usuario WHERE id = ?',
+        [id]
+    );
+    return rows[0]; 
+}
+
 //EXEMPLO:>>>>>
 // 
 // pegar id do psicologo

@@ -1,14 +1,14 @@
-import express from 'express';
-import { buscarPorEmail, inserirUsuario } from '../repository/usuarioRepository';
+import { Router } from 'express';
+import { findUsuarioByEmail, createUsuario } from '../repository/usuarioRepository.js';
 import bcrypt from 'bcrypt';
 import jwt from 'jsonwebtoken';
 
-const router = express.Router();
+const router = Router();
 
 router.post('/login', async (req, res) => {
   try {
       const { email, senha } = req.body;
-      const usuario = await usuarioRepository.findUsuarioByEmail(email);
+      const usuario = await findUsuarioByEmail(email);
 
       if (!usuario) {
           return res.status(404).send('Usuário não encontrado');
@@ -34,15 +34,16 @@ router.post('/login', async (req, res) => {
 router.post('/cadastro', async (req, res) => {
   try {
     const { nome, email, senha, cpf, telefone } = req.body;
-    const usuarioExistente = await usuarioRepository.findUsuarioByEmail(email);
-    
+
+    const usuarioExistente = await findUsuarioByEmail(email);
     if (usuarioExistente) {
       return res.status(400).json({ error: 'Email já cadastrado' });
     }
 
     const hashedPassword = await bcrypt.hash(senha, 10);
-    const userId = await usuarioRepository.createUsuario(
-      nome, email, hashedPassword, cpf, telefone);
+    const cpfLimpo = cpf.replace(/[.\-]/g, '');
+    const userId = await createUsuario(
+      nome, email, hashedPassword, cpfLimpo, telefone);
     
     const token = jwt.sign(
       { id: userId, tipo: 'usuario' },

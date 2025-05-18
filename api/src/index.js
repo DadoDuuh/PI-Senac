@@ -3,8 +3,8 @@ import express from 'express';
 import cors from 'cors';
 
 import usuarioController from './controller/usuarioController.js';
-import psicologoController from './controller/usuarioController.js';
-import consultaController from './controller/usuarioController.js';
+import psicologoController from './controller/psicologoController.js';
+import consultaController from './controller/consultaController.js';
 
 // Criação da aplicação Express
 const app = express();

@@ -1,9 +1,11 @@
-const express = require('express');
+import { Router } from 'express';
 import { listarConsultas, agendarConsulta } from '../repository/consultaRepository.js';
+import { findUsuarioById } from '../repository/usuarioRepository.js';
+import { findPsicologoById } from '../repository/psicologoRepository.js';
 
-const router = express.Router();
+const router = Router();
 
-router.get('/', async (req, res) => {
+router.get('/listar', async (req, res) => {
   try {
       const consultas = await listarConsultas();
       res.json(consultas);
@@ -14,10 +16,22 @@ router.get('/', async (req, res) => {
 
 router.post('/agendar', async (req, res) => {
   try {
+      const { pacienteId, psicologoId, dataHora } = req.body;
+
+      const paciente = await findUsuarioById(pacienteId);
+      if (!paciente) {
+          return res.status(400).json({ error: 'Paciente não encontrado' });
+      }
+
+      const psicologo = await findPsicologoById(psicologoId);
+      if (!psicologo) {
+          return res.status(400).json({ error: 'Psicólogo não encontrado' });
+      }
+
       const novaConsulta = {
-          pacienteId: req.body.pacienteId,
-          psicologoId: req.body.psicologoId,
-          dataHora: new Date(req.body.dataHora)
+          pacienteId,
+          psicologoId,
+          dataHora: new Date(dataHora)
       };
 
       const id = await agendarConsulta(novaConsulta);
