@@ -111,13 +111,6 @@ export default function Main(props) {
                 Depoimentos
                 <span className="nav-underline"></span>
               </div>
-              <div
-                onClick={() => scrollToSection("sobre")}
-                className="nav-link"
-              >
-                Sobre Nós
-                <span className="nav-underline"></span>
-              </div>
             </div>
           )}
 
