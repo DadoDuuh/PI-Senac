@@ -1,11 +1,16 @@
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useLocation } from "react-router-dom";
 import { useEffect, useState } from "react";
 import "./Main.scss";
 
 export default function Main(props) {
   const navigate = useNavigate();
+  const location = useLocation();
   const [scrolled, setScrolled] = useState(false);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+
+  const isAuthRoute = ["/login", "/cadastro"].some((route) =>
+    location.pathname.startsWith(route)
+  );
 
   useEffect(() => {
     const handleScroll = () => {
@@ -33,44 +38,65 @@ export default function Main(props) {
             <h1 className="brand-title">PsicoAcolher</h1>
           </div>
 
-          <nav className="desktop-nav">
-            <NavLink href="#" text="Início" active />
-            <NavLink href="#" text="Como Funciona" />
-            <NavLink href="#" text="Profissionais" />
-            <NavLink href="#" text="Depoimentos" />
-            <NavLink href="#" text="Sobre Nós" />
-          </nav>
+          {!isAuthRoute && (
+            <nav className="desktop-nav">
+              <NavLink
+                href="/"
+                text="Início"
+                active={location.pathname === "/"}
+              />
+              <NavLink href="#como-funciona" text="Como Funciona" />
+              <NavLink href="#profissionais" text="Profissionais" />
+              <NavLink href="#depoimentos" text="Depoimentos" />
+              <NavLink href="#sobre" text="Sobre Nós" />
+            </nav>
+          )}
 
           <div className="action-buttons">
-            <a
-              onClick={irParaLogin}
-              href="#"
-              className="btn btn-outline-primary btn-login"
-            >
-              Login
-            </a>
-            <a href="#agendar" className="btn btn-primary btn-cta">
-              Agendar Consulta
-            </a>
-            <button
-              className="mobile-menu-toggle"
-              onClick={toggleMobileMenu}
-              aria-label="Menu"
-            >
-              <i
-                className={`fas ${mobileMenuOpen ? "fa-times" : "fa-bars"}`}
-              ></i>
-            </button>
+            {!isAuthRoute && (
+              <a href="#agendar" className="btn btn-primary btn-cta">
+                Agendar Consulta
+              </a>
+            )}
+
+            {!isAuthRoute && (
+              <a
+                onClick={irParaLogin}
+                href="#"
+                className="btn btn-outline-primary btn-login"
+              >
+                Login
+              </a>
+            )}
+
+            {!isAuthRoute && (
+              <button
+                className="mobile-menu-toggle"
+                onClick={toggleMobileMenu}
+                aria-label="Menu"
+              >
+                <i
+                  className={`fas ${mobileMenuOpen ? "fa-times" : "fa-bars"}`}
+                ></i>
+              </button>
+            )}
           </div>
         </div>
 
-        <div className={`mobile-menu ${mobileMenuOpen ? "open" : ""}`}>
-          <NavLink href="#" text="Início" mobile />
-          <NavLink href="#" text="Como Funciona" mobile />
-          <NavLink href="#" text="Profissionais" mobile />
-          <NavLink href="#" text="Depoimentos" mobile />
-          <NavLink href="#" text="Sobre Nós" mobile />
-        </div>
+        {!isAuthRoute && (
+          <div className={`mobile-menu ${mobileMenuOpen ? "open" : ""}`}>
+            <NavLink
+              href="/"
+              text="Início"
+              mobile
+              active={location.pathname === "/"}
+            />
+            <NavLink href="#como-funciona" text="Como Funciona" mobile />
+            <NavLink href="#profissionais" text="Profissionais" mobile />
+            <NavLink href="#depoimentos" text="Depoimentos" mobile />
+            <NavLink href="#sobre" text="Sobre Nós" mobile />
+          </div>
+        )}
       </header>
 
       {props.children}

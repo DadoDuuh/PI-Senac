@@ -40,7 +40,6 @@ export default function Cadastro() {
 
   const toggleUserType = () => {
     setisPsicologo(!isPsicologo);
-    // Limpa o campo CRP ao alternar
     setFormData((prev) => ({ ...prev, crp: "" }));
   };
 
