@@ -1,6 +1,10 @@
-import React, { useState } from "react";
-import { useNavigate } from "react-router-dom";
+import React from "react";
 import "./Cadastro.scss";
+
+import { cadastroPsicologo } from '../../api/psicologoApi';
+import { cadastroUsuario } from '../../api/usuarioApi';
+import { useNavigate } from "react-router-dom";
+import { useState, useEffect } from "react";
 
 export default function Cadastro() {
   const navigate = useNavigate();
@@ -15,6 +19,42 @@ export default function Cadastro() {
     cpf: "",
     crp: "",
   });
+  
+
+  async function cadastroClick() {
+    try {
+      if(formData.password !== formData.confirmPassword) {
+        alert("As senhas não coincidem!");
+      }
+
+      if(isPsicologo) {
+        const r = await cadastroPsicologo(formData.nome, formData.crp, formData.email, formData.senha);
+
+        Storage('psicologo-logado', r);
+        
+        navigate('/paginaPsicologo');
+      }
+      else {
+        const r = await cadastroUsuario(formData.nome, formData.cpf, formData.email, formData.senha, formData.phone);
+
+        Storage('usuario-logado', r);
+        
+        navigate('/paginaUsuario');
+      }
+    }
+    catch (err) {
+        if (err.response?.status === 401) {
+          alert(err.response?.data.erro);
+      }
+    }
+  }
+
+  document.addEventListener("keypress", function  (e) {
+    if(e.key === "Enter"){
+        const btn = document.querySelector("#send");
+        btn.click();
+    }
+  })
 
   const irParaLogin = (e) => {
     e.preventDefault();
@@ -209,6 +249,7 @@ export default function Cadastro() {
           </div>
 
           <button
+            onClick={cadastroClick}
             type="submit"
             className="btn btn-primary w-100 animated-button"
           >

@@ -1,14 +1,50 @@
 import React from "react";
 import "./Login.scss";
+
+import Storage from 'local-storage'
 import { useNavigate } from "react-router-dom";
+import { useState, useEffect } from "react";
+import { loginUsuario } from '../../api/usuarioApi'
 
 export default function Login() {
   const navigate = useNavigate();
+
+  const [email, setEmail] = useState('');
+  const [senha, setSenha] = useState('');
+
+  useEffect(() => {
+    if (Storage('usuario-logado')) {
+      navigate('/paginaUsuario');
+    }
+  }, [])
+
 
   const irParaCadastro = (e) => {
     e.preventDefault();
     navigate("/cadastro");
   };
+
+  async function entrarClick() {
+    try {
+      const r = await loginUsuario(email, senha);
+
+      Storage('usuario-logado', r);
+
+      navigate('/paginaUsuario');
+    }
+    catch (err) {
+      if (err.response?.status === 401) {
+        alert(err.response?.data.erro);
+      }
+    }
+  }
+
+  document.addEventListener("keypress", function (e) {
+    if (e.key === "Enter") {
+      const btn = document.querySelector("#send");
+      btn.click();
+    }
+  })
 
   return (
     <div className="login-page d-flex align-items-center justify-content-center min-vh-100">
@@ -27,6 +63,8 @@ export default function Login() {
             </label>
             <input
               type="email"
+              value={email}
+              onChange={e => setEmail(e.target.value)}
               className="form-control input-field"
               id="email"
               placeholder="seuemail@exemplo.com"
@@ -39,6 +77,8 @@ export default function Login() {
             </label>
             <input
               type="password"
+              value={senha}
+              onChange={e => setSenha(e.target.value)}
               className="form-control input-field"
               id="senha"
               placeholder="Digite sua senha"
@@ -46,19 +86,13 @@ export default function Login() {
             />
           </div>
           <div className="d-flex justify-content-between align-items-center mb-3">
-            <div className="form-check">
-              <input
-                className="form-check-input"
-                type="checkbox"
-                id="lembrar"
-              />
-              <label className="form-check-label">Lembrar-me</label>
-            </div>
             <a href="#" className="animated-link">
               Esqueci minha senha
             </a>
           </div>
           <button
+            onClick={entrarClick}
+            id="send"
             type="submit"
             className="btn btn-primary w-100 fw-bold animated-button"
           >
