@@ -25,6 +25,16 @@ export default function Main(props) {
     navigate("/login/usuario");
   };
 
+  const irParaCadastro = (e) => {
+    e.preventDefault();
+    navigate("/cadastro");
+  };
+
+  const irParaHome = (e) => {
+    e.preventDefault();
+    navigate("/");
+  };
+
   const toggleMobileMenu = () => {
     setMobileMenuOpen(!mobileMenuOpen);
   };
@@ -33,7 +43,7 @@ export default function Main(props) {
     <main className="project-main">
       <header className={`main-header ${scrolled ? "scrolled" : ""}`}>
         <div className="container header-container">
-          <div className="brand-wrapper">
+          <div onClick={irParaHome} className="brand-wrapper">
             <i className="fas fa-heart brand-icon pulse"></i>
             <h1 className="brand-title">PsicoAcolher</h1>
           </div>
@@ -45,17 +55,21 @@ export default function Main(props) {
                 text="Início"
                 active={location.pathname === "/"}
               />
-              <NavLink href="#como-funciona" text="Como Funciona" />
-              <NavLink href="#profissionais" text="Profissionais" />
-              <NavLink href="#depoimentos" text="Depoimentos" />
-              <NavLink href="#sobre" text="Sobre Nós" />
+              <NavLink text="Como Funciona" />
+              <NavLink text="Profissionais" />
+              <NavLink text="Depoimentos" />
+              <NavLink text="Sobre Nós" />
             </nav>
           )}
 
           <div className="action-buttons">
             {!isAuthRoute && (
-              <a href="#agendar" className="btn btn-primary btn-cta">
-                Agendar Consulta
+              <a
+                href=""
+                onClick={irParaCadastro}
+                className="btn btn-primary btn-cta"
+              >
+                Cadastrar
               </a>
             )}
 

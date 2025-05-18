@@ -1,11 +1,10 @@
 import React from "react";
-import "./Home.scss"; // Arquivo separado para os estilos customizados
+import "./Home.scss";
 import "@fortawesome/fontawesome-free/css/all.min.css";
 
 function Home() {
   return (
     <div className="font-sans text-dark">
-      {/* Hero Section */}
       <section className="hero-gradient text-white py-5">
         <div className="container py-5">
           <div className="row align-items-center">
@@ -40,7 +39,6 @@ function Home() {
         </div>
       </section>
 
-      {/* How It Works */}
       <section className="py-5 bg-light">
         <div className="container text-center mb-5">
           <h2 className="fw-bold mb-3">Como Funciona</h2>
@@ -85,7 +83,6 @@ function Home() {
         </div>
       </section>
 
-      {/* Psicólogos */}
       <section className="py-5">
         <div className="container text-center mb-5">
           <h2 className="fw-bold mb-3">Nossos Psicólogos Voluntários</h2>
@@ -172,7 +169,6 @@ function Home() {
         </div>
       </section>
 
-      {/* Depoimentos */}
       <section className="py-5 bg-light">
         <div className="container text-center mb-5">
           <h2 className="fw-bold mb-3">Depoimentos</h2>
