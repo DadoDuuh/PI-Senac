@@ -9,7 +9,6 @@ router.post('/login', async (req, res) => {
   try {
       const { email, senha } = req.body;
       const usuario = await findUsuarioByEmail(email);
-
       if (!usuario) {
           return res.status(404).send('Usuário não encontrado');
       }

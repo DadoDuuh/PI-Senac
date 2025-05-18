@@ -5,7 +5,6 @@ export async function loginUsuario(email, senha) {
         email: email,
         senha: senha
     });
-
     return resposta.data;
 }
 
