@@ -143,22 +143,6 @@ export default function Cadastro() {
                 />
               </div>
             </div>
-            <div className="col-md-6">
-              <div className="form-group">
-                <label htmlFor="birthDate" className="form-label">
-                  Data de Nascimento
-                </label>
-                <input
-                  type="date"
-                  className="form-control input-field"
-                  id="birthDate"
-                  name="birthDate"
-                  value={formData.birthDate}
-                  onChange={handleChange}
-                  required
-                />
-              </div>
-            </div>
           </div>
 
           {isPsicologo && (
