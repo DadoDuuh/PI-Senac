@@ -28,11 +28,11 @@
 
 ## Nota Destaque:
 -Rotas:
- path="/" />
- path="/login/usuario" />
- path="/cadastro" />
- path="/paginaUsuario" />
- path="/Agendamentos" />
+ path="/" /> </br>
+ path="/login/usuario" /> </br>
+ path="/cadastro" /> </br>
+ path="/paginaUsuario" /> </br>
+ path="/Agendamentos" /> </br>
  (Certificar-se de que tais string sejam colocadas na URL da página)
 
 - O projeto, em sua fase inicial, contempla as funcionalidades de visualização da página inicial (home), login e cadastro, todas integradas à API e com comunicação direta com o banco de dados. As seções de visualização dos psicólogos disponíveis e dos agendamentos realizados, nessa PI, estão mockadas — ou seja, os dados são fixos no código —, mas já representam de forma fiel o fluxo funcional proposto para essas etapas.
