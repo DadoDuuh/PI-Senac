@@ -27,7 +27,7 @@
 7. Acessar: http://localhost:3000
 
 ## Nota Destaque:
--Rotas:
+-Rotas: </br>
  path="/" /> </br>
  path="/login/usuario" /> </br>
  path="/cadastro" /> </br>
