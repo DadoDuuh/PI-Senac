@@ -1,7 +1,7 @@
-CREATE DATABASE IF NOT EXISTS saude_mental
-USE saude_mental
+CREATE DATABASE IF NOT EXISTS saude_mental;
+USE saude_mental;
 
-CREATE TABLE usuario (
+CREATE TABLE usuarios (
   id INT PRIMARY KEY AUTO_INCREMENT,
   nome VARCHAR(100) NOT NULL,
   email VARCHAR(100) UNIQUE NOT NULL,
@@ -11,7 +11,7 @@ CREATE TABLE usuario (
   created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
 
-CREATE TABLE psicologo (
+CREATE TABLE psicologos (
   id INT PRIMARY KEY AUTO_INCREMENT,
   nome VARCHAR(100) NOT NULL,
   crp VARCHAR(20) UNIQUE NOT NULL,
@@ -25,8 +25,9 @@ CREATE TABLE agendamentos (
   id INT PRIMARY KEY AUTO_INCREMENT,
   usuario_id INT,
   psicologo_id INT,
+  paciente_id INT,
   data_hora DATETIME NOT NULL,
   status ENUM('confirmado', 'reagendado', 'cancelado') DEFAULT 'confirmado',
-  FOREIGN KEY (paciente_id) REFERENCES pacientes(id),
+  FOREIGN KEY (paciente_id) REFERENCES usuarios(id),
   FOREIGN KEY (psicologo_id) REFERENCES psicologos(id)
 );

@@ -8,7 +8,7 @@ export async function loginUsuario(email, senha) {
     return resposta.data;
 }
 
-export async function cadastroUsuario(nome, email, senha, cpf, telefone) {
+export async function cadastroUsuario(nome, cpf, email, senha, telefone) {
     const resposta = await api.post('/usuarios/cadastro', {
         nome: nome,
         email: email,

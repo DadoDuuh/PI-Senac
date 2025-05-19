@@ -22,20 +22,21 @@ export default function Cadastro() {
   
 
   async function cadastroClick() {
+    console.log(formData)
     try {
       if(formData.password !== formData.confirmPassword) {
         alert("As senhas não coincidem!");
       }
 
       if(isPsicologo) {
-        const r = await cadastroPsicologo(formData.nome, formData.crp, formData.email, formData.senha);
+        const r = await cadastroPsicologo(formData.name, formData.crp, formData.email, formData.password);
 
         Storage('psicologo-logado', r);
         
         navigate('/paginaPsicologo');
       }
       else {
-        const r = await cadastroUsuario(formData.nome, formData.cpf, formData.email, formData.senha, formData.phone);
+        const r = await cadastroUsuario(formData.name, formData.cpf, formData.email, formData.password, formData.phone);
 
         Storage('usuario-logado', r);
         
@@ -69,17 +70,6 @@ export default function Cadastro() {
     }));
   };
 
-  const handleSubmit = (e) => {
-    e.preventDefault();
-    // Lógica de cadastro aqui
-    if (isPsicologo) {
-      console.log("Cadastro de psicólogo:", formData);
-    } else {
-      console.log("Cadastro de paciente:", formData);
-    }
-    navigate("/login");
-  };
-
   const toggleUserType = () => {
     setIsPsicologo(!isPsicologo);
     // Limpa o campo que não será mais usado
@@ -102,7 +92,7 @@ export default function Cadastro() {
           </p>
         </div>
 
-        <form onSubmit={handleSubmit}>
+        <form onSubmit={irParaLogin}>
           <div className="form-group">
             <label htmlFor="name" className="form-label">
               Nome Completo

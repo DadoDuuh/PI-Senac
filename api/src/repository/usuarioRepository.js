@@ -2,7 +2,7 @@ import { pool } from './connection.js';
 
 export async function findUsuarioByEmail(email) {
     const [rows] = await pool.query(
-        'SELECT * FROM usuario WHERE email = ?',
+        'SELECT * FROM usuarios WHERE email = ?',
         [email]
     );
     return rows[0];
@@ -10,7 +10,7 @@ export async function findUsuarioByEmail(email) {
 
 export async function createUsuario(nome, email, senha, cpf, telefone) {
   const [result] = await pool.query(
-    'INSERT INTO usuario (nome, email, senha, cpf, telefone) VALUES (?, ?, ?, ?, ?)',
+    'INSERT INTO usuarios (nome, email, senha, cpf, telefone) VALUES (?, ?, ?, ?, ?)',
     [nome, email, senha, cpf, telefone]
   );
   return result.insertId;
@@ -18,7 +18,7 @@ export async function createUsuario(nome, email, senha, cpf, telefone) {
 
 export async function findUsuarioById(id) {
     const [rows] = await pool.query(
-        'SELECT * FROM usuario WHERE id = ?',
+        'SELECT * FROM usuarios WHERE id = ?',
         [id]
     );
     return rows[0]; 
