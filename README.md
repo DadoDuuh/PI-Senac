@@ -3,8 +3,6 @@
 ## Grupo 31:
 
 - Eduardo Cesar Silva de Avila
-- Felipe Dantas do Nascimento 
-- Itamar de Jesus Borges Rocha
 - Pedro Athayde Alves
 - Pedro Spigariol Colbert
 - Sônia Gomes Caldas
