@@ -1,0 +1,40 @@
+// conta.scss
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap');
+
+// Variáveis
+$primary-color: #6c63ff;
+$secondary-color: #4a42e6;
+$text-color: #2a2356;
+$white: #ffffff;
+$light-gray: #f8f9fa;
+$dark-gray: #6c757d;
+$success-color: #28a745;
+$danger-color: #dc3545;
+$transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
+
+.conta-page {
+  font-family: 'Poppins', sans-serif;
+  color: $text-color;
+  min-height: 100vh;
+}
+
+.conta-header {
+  background: linear-gradient(135deg, rgba($primary-color, 0.1), rgba($secondary-color, 0.1));
+  padding: 3rem 0 2rem;
+
+  h1 {
+    font-size: 2.5rem;
+    font-weight: 700;
+    margin-bottom: 0.5rem;
+    color: $primary-color;
+  }
+
+  .subtitle {
+    font-size: 1.1rem;
+    color: $dark-gray;
+  }
+}
+
+.conta-container {
+  padding: 2rem 0 4rem;
+}

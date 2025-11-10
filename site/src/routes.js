@@ -5,6 +5,7 @@ import Login from "./pages/loginUsuario/Login.jsx";
 import Cadastro from "./pages/cadastro/Cadastro.jsx";
 import PaginaUsuario from "./pages/paginaUsuario/PaginaUsuario.jsx";
 import Agendamentos from "./pages/Agendamentos/Agendamentos.jsx";
+import ContaUsuario from "./pages/minhaConta/usuario/Conta.jsx";
 
 export default function RoutesComponent() {
   return (
@@ -14,6 +15,7 @@ export default function RoutesComponent() {
       <Route path="/cadastro" element={<Cadastro />} />
       <Route path="/paginaUsuario" element={<PaginaUsuario />} />
       <Route path="/Agendamentos" element={<Agendamentos />} />
+      <Route path="/conta/usuario" element={<ContaUsuario />} />
     </Routes>
   );
 }
