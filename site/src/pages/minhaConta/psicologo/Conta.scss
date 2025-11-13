@@ -1,0 +1,367 @@
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap');
+
+$primary: #6c63ff;
+$primary-hover: #5640c9;
+$secondary: #4a42e6;
+$text-dark: #2a2356;
+$text-light: #7a7a7a;
+$white: #ffffff;
+$light-gray: #f8f9fa;
+$dark-gray: #6c757d;
+$danger: #f66f73;
+$danger-bg: #ffe5e6;
+$radius: 14px;
+$shadow: 0 3px 12px rgba(0, 0, 0, 0.08);
+$transition: all 0.3s ease-in-out;
+
+.conta-page {
+    font-family: 'Poppins', sans-serif;
+    color: $text-dark;
+    min-height: 100vh;
+}
+
+.conta-header {
+    background: #efecff;
+    padding: 3rem 2rem;
+
+    .container-contas {
+        display: flex;
+        align-items: flex-start;
+        gap: 2rem;
+    }
+
+    .container-perfil {
+        position: relative;
+        width: 110px;
+
+        .img-perfil {
+            width: 110px;
+            height: 110px;
+            border-radius: 50%;
+            object-fit: cover;
+        }
+
+        .img-lapis {
+            position: absolute;
+            bottom: 0;
+            right: 0;
+            width: 28px;
+            height: 28px;
+            background: white;
+            padding: 6px;
+            border-radius: 50%;
+            box-shadow: 0 2px 6px rgba(0, 0, 0, 0.15);
+            cursor: pointer;
+        }
+    }
+
+    .usu-info {
+        flex: 1;
+
+        .top-row {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+
+            h1 {
+                font-size: 2.4rem;
+                font-weight: 700;
+                color: #6c63ff;
+                margin: 0;
+            }
+
+            .tags {
+                display: flex;
+                gap: 0.4rem;
+                flex-wrap: wrap;
+
+                .tag {
+                    padding: 4px 10px;
+                    font-size: 0.8rem;
+                    background: #dcd6ff;
+                    border-radius: 6px;
+                    color: #6c63ff;
+                    font-weight: 600;
+                }
+
+                .tag-plus {
+                    padding: 4px 12px;
+                    background: #e0e0e0;
+                }
+            }
+        }
+
+        .subtitle {
+            font-size: 1rem;
+            margin: 8px 0 14px;
+            color: #7a7a7a;
+        }
+
+        .actions-row {
+            display: flex;
+            align-items: center;
+            gap: 1.5rem;
+
+            .btn-detalhes {
+                background: #1a73e8;
+                color: white;
+                border: none;
+                padding: 10px 26px;
+                border-radius: 20px;
+                font-size: 1rem;
+                font-weight: 600;
+                cursor: pointer;
+            }
+
+            .checkbox-row {
+                display: flex;
+                align-items: center;
+                gap: 0.5rem;
+                font-weight: 600;
+                color: #3c3c3c;
+
+                input[type="checkbox"] {
+                    width: 18px;
+                    height: 18px;
+                    accent-color: #6c63ff;
+                }
+            }
+        }
+    }
+
+    /* BIOGRAFIA */
+    .biografia-wrapper {
+        margin-top: 2rem;
+
+        .bio-title {
+            color: #6c63ff;
+            font-size: 1.1rem;
+            margin-bottom: 0.6rem;
+            font-weight: 600;
+        }
+
+        .bio-card {
+            background: white;
+            padding: 1.6rem;
+            border-radius: 10px;
+            box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+            max-width: 650px;
+
+            p {
+                font-size: 1rem;
+                line-height: 1.45;
+                color: #333;
+                margin: 0;
+            }
+        }
+    }
+}
+
+
+.conta-container {
+    padding: 2.5rem 6%;
+    max-width: 1200px;
+    margin: auto;
+
+    .agenda-section {
+        h2 {
+            font-size: 1.6rem;
+            font-weight: 700;
+            color: #6c63ff;
+        }
+
+        .subtitle {
+            margin-top: 4px;
+            color: $text-light;
+            font-size: 0.9rem;
+        }
+    }
+
+    .tabs {
+        margin-top: 2rem;
+        display: flex;
+        gap: 2rem;
+        border-bottom: 2px solid #eee;
+
+        .tab {
+            background: none;
+            border: none;
+            font-size: 1rem;
+            font-weight: 600;
+            padding-bottom: 12px;
+            cursor: pointer;
+            color: $text-light;
+            position: relative;
+            transition: $transition;
+
+            &:hover {
+                color: $primary;
+            }
+
+            &.active {
+                color: $primary;
+
+                &:after {
+                    content: "";
+                    position: absolute;
+                    left: 0;
+                    right: 0;
+                    bottom: -2px;
+                    height: 3px;
+                    background: $primary;
+                    border-radius: 6px;
+                }
+            }
+
+            .badge {
+                background: $primary;
+                color: white;
+                font-size: 0.75rem;
+                padding: 2px 7px;
+                border-radius: 10px;
+                margin-left: 6px;
+            }
+        }
+    }
+
+    .consulta-card {
+        margin-top: 1.5rem;
+        background: $white;
+        padding: 1.4rem 1.8rem;
+        border-radius: $radius;
+        box-shadow: $shadow;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        transition: $transition;
+
+        .btn-ver-detalhes {
+            background: $light-gray;
+            color: $text-dark;
+
+            &:hover {
+                background: darken($light-gray, 3%);
+            }
+        }
+
+        .btn-repetir-consulta,
+        .btn-repetir {
+            background: $primary;
+            color: white;
+
+            &:hover {
+                background: $primary-hover;
+            }
+        }
+
+        .btn-avaliar {
+            background: $primary;
+            color: white;
+
+            &:hover {
+                background: $primary-hover;
+            }
+        }
+
+
+        &:hover {
+            transform: translateY(-2px);
+        }
+
+        .profissional-info {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+
+            .foto-profissional {
+                width: 68px;
+                height: 68px;
+                border-radius: 50%;
+                object-fit: cover;
+            }
+
+            h3 {
+                font-size: 1.05rem;
+                font-weight: 600;
+                margin-bottom: 3px;
+            }
+
+            .especialidade {
+                color: $primary;
+                font-size: 0.85rem;
+                margin-bottom: 8px;
+            }
+
+            .data,
+            .info {
+                font-size: 0.85rem;
+                color: $text-light;
+                margin-top: 4px;
+            }
+        }
+
+        .acoes {
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
+
+            button {
+                border-radius: 20px;
+                font-size: 0.85rem;
+                font-weight: 600;
+                padding: 8px 18px;
+                cursor: pointer;
+                border: none;
+                transition: $transition;
+                white-space: nowrap;
+            }
+
+            .btn-cancelar {
+                background: $danger-bg;
+                color: $danger;
+
+                &:hover {
+                    background: $danger;
+                    color: white;
+                }
+            }
+
+            .btn-reagendar {
+                background: $light-gray;
+                color: $primary;
+
+                &:hover {
+                    background: darken($light-gray, 3%);
+                }
+            }
+
+            .btn-iniciar,
+            .btn-chat {
+                background: $primary;
+                color: white;
+
+                &:hover {
+                    background: $primary-hover;
+                }
+            }
+        }
+    }
+
+    @media (max-width: 768px) {
+        .consulta-card {
+            flex-direction: column;
+            align-items: flex-start;
+            gap: 1rem;
+
+            .acoes {
+                width: 100%;
+                flex-direction: row;
+                flex-wrap: wrap;
+            }
+        }
+
+        .tabs {
+            gap: 1.2rem;
+        }
+    }
+}

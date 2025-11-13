@@ -114,6 +114,35 @@ $transition: all 0.3s ease-in-out;
     align-items: center;
     transition: $transition;
 
+    .btn-ver-detalhes {
+      background: $light-gray;
+      color: $text-dark;
+
+      &:hover {
+        background: darken($light-gray, 3%);
+      }
+    }
+
+    .btn-repetir-consulta,
+    .btn-repetir {
+      background: $primary;
+      color: white;
+
+      &:hover {
+        background: $primary-hover;
+      }
+    }
+
+    .btn-avaliar {
+      background: $primary;
+      color: white;
+
+      &:hover {
+        background: $primary-hover;
+      }
+    }
+
+
     &:hover {
       transform: translateY(-2px);
     }
