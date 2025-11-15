@@ -193,6 +193,8 @@ $transition: all 0.3s ease-in-out;
         border: none;
         transition: $transition;
         white-space: nowrap;
+        background: #6C63FF;
+        color: #ffffff;
       }
 
       .btn-cancelar {
@@ -216,7 +218,7 @@ $transition: all 0.3s ease-in-out;
 
       .btn-iniciar,
       .btn-chat {
-        background: $primary;
+        background: #6C63FF;
         color: white;
 
         &:hover {

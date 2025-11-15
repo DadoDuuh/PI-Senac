@@ -1,8 +1,23 @@
 import "./Conta.scss";
 import lapisIcon from "../../../assets/images/lapis-icon.svg";
 import NavCategoria from "../../../components/nav-categoria";
+import { useState } from "react";
+import ModalPadrao from "../../../components/modal-padrao";
 
 export default function ContaPsicologo() {
+  const [modalOpen, setModalOpen] = useState(false);
+  const [consultaSelecionada, setConsultaSelecionada] = useState(null);
+
+  function abrirModalConfirmar(consulta) {
+    setConsultaSelecionada(consulta);
+    setModalOpen(true);
+  }
+
+  function fecharModal() {
+    setModalOpen(false);
+    setConsultaSelecionada(null);
+  }
+
   const consultasProximas = [
     {
       id: 1,
@@ -23,6 +38,27 @@ export default function ContaPsicologo() {
       tipo: "Online - PsicoAcolher",
       foto: "https://i.pravatar.cc/150?img=32",
       acoes: ["Acessar chat", "Iniciar consulta", "Reagendar", "Cancelar"],
+    },
+  ];
+
+  const consultasSolicitacoes = [
+    {
+      id: 1,
+      nome: "Fulano da Silva",
+      especialidade: "Ansiedade e Depressão",
+      data: "15/05/2023 às 14:00",
+      duracao: "50 min",
+      tipo: "Online - PsicoAcolher",
+      foto: "https://i.pravatar.cc/150?img=12",
+    },
+    {
+      id: 2,
+      nome: "Sicrano Beltrano",
+      especialidade: "Ansiedade e Depressão",
+      data: "16/05/2023 às 15:00",
+      duracao: "50 min",
+      tipo: "Online - PsicoAcolher",
+      foto: "https://i.pravatar.cc/150?img=32",
     },
   ];
 
@@ -122,7 +158,6 @@ export default function ContaPsicologo() {
               />
               <div>
                 <h3>{consulta.nome}</h3>
-                <p className="especialidade">{consulta.especialidade}</p>
 
                 <p className="data">
                   <i className="icon-calendar"></i> {consulta.data}
@@ -143,6 +178,72 @@ export default function ContaPsicologo() {
                   {acao}
                 </button>
               ))}
+            </div>
+          </div>
+        ))}
+      </>
+    );
+  }
+
+  function ModalConfirmarConteudo({ consulta, onClose }) {
+    return (
+      <div className="modal-confirmar">
+        <h2 className="title">Agendamento de consulta</h2>
+
+        <p className="texto-explicativo">
+          Para confirmar o agendamento da consulta, por favor, insira o link da
+          reunião que o paciente deverá entrar no horário solicitado.
+        </p>
+
+        <p className="data-select">
+          <i className="icon-calendar"></i> Consulta a ser realizada em{" "}
+          <strong>{consulta.data}</strong>
+        </p>
+
+        <label className="label">
+          Link da reunião a ser enviada para o paciente
+        </label>
+        <input type="text" className="input" placeholder="Link" />
+
+        <div className="buttons-row">
+          <button className="btn-cancelar" onClick={onClose}>
+            Cancelar
+          </button>
+
+          <button className="btn-confirmar">Enviar</button>
+        </div>
+      </div>
+    );
+  }
+
+  function renderSolicitacoesConsultas() {
+    return (
+      <>
+        {consultasSolicitacoes.map((consulta) => (
+          <div key={consulta.id} className="consulta-card">
+            <div className="profissional-info">
+              <img src={consulta.foto} alt="" className="foto-profissional" />
+              <div>
+                <h3>{consulta.nome}</h3>
+                <p className="data">
+                  <i className="icon-calendar" /> {consulta.data}
+                </p>
+                <p className="info">{consulta.duracao}</p>
+                <p className="info">{consulta.tipo}</p>
+              </div>
+            </div>
+
+            <div className="acoes">
+              <button className="btn-acessar">Acessar chat</button>
+
+              <button
+                className="btn-confirmar"
+                onClick={() => abrirModalConfirmar(consulta)}
+              >
+                Confirmar
+              </button>
+
+              <button className="btn-cancelar">Cancelar</button>
             </div>
           </div>
         ))}
@@ -262,7 +363,7 @@ export default function ContaPsicologo() {
               },
               "Solicitação de consultas": {
                 nome: <p style={{ margin: 0 }}>Solicitação de consultas</p>,
-                conteudo: () => <p>Em desenvolvimento...</p>,
+                conteudo: renderSolicitacoesConsultas,
               },
               Histórico: {
                 nome: (
@@ -276,6 +377,14 @@ export default function ContaPsicologo() {
           />
         </section>
       </main>
+      <ModalPadrao isOpen={modalOpen} onClose={fecharModal}>
+        {consultaSelecionada && (
+          <ModalConfirmarConteudo
+            consulta={consultaSelecionada}
+            onClose={fecharModal}
+          />
+        )}
+      </ModalPadrao>
     </div>
   );
 }
