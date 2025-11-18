@@ -68,7 +68,7 @@ export default function Main(props) {
 
   return (
     <main className="project-main">
-      <header className={`main-header ${scrolled ? "scrolled" : ""}`}>
+      <header className={`main-header`}>
         <div className="container header-container">
           <div onClick={irParaHome} className="brand-wrapper">
             <i className="fas fa-heart brand-icon pulse"></i>

@@ -366,7 +366,7 @@ $transition: all 0.3s ease-in-out;
     }
 }
 
-.modal-confirmar {
+.modal-container {
     text-align: center;
     padding: 10px 20px;
 
@@ -441,6 +441,11 @@ $transition: all 0.3s ease-in-out;
             border-color: #5b47f3;
             box-shadow: 0 0 0 2px rgba(91, 71, 243, 0.15);
         }
+    }
+
+    .textarea-anotacoes {
+        height: 220px;
+        resize: none;
     }
 
     .buttons-row {

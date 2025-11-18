@@ -7,6 +7,9 @@ import ModalPadrao from "../../../components/modal-padrao";
 export default function ContaPsicologo() {
   const [modalOpen, setModalOpen] = useState(false);
   const [consultaSelecionada, setConsultaSelecionada] = useState(null);
+  const [modalAnotacoesOpen, setModalAnotacoesOpen] = useState(false);
+  const [consultaAnotacaoSelecionada, setConsultaAnotacaoSelecionada] =
+    useState(null);
 
   function abrirModalConfirmar(consulta) {
     setConsultaSelecionada(consulta);
@@ -16,6 +19,16 @@ export default function ContaPsicologo() {
   function fecharModal() {
     setModalOpen(false);
     setConsultaSelecionada(null);
+  }
+
+  function abrirModalAnotacoes(consulta) {
+    setConsultaAnotacaoSelecionada(consulta);
+    setModalAnotacoesOpen(true);
+  }
+
+  function fecharModalAnotacoes() {
+    setModalAnotacoesOpen(false);
+    setConsultaAnotacaoSelecionada(null);
   }
 
   const consultasProximas = [
@@ -72,7 +85,6 @@ export default function ContaPsicologo() {
       tipo: "Online - PsicoAcolher",
       foto: "https://i.pravatar.cc/150?img=47",
       status: "Finalizada",
-      acoes: ["Ver detalhes"],
     },
     {
       id: 102,
@@ -83,7 +95,6 @@ export default function ContaPsicologo() {
       tipo: "Presencial - Av. Paulista, 900",
       foto: "https://i.pravatar.cc/150?img=58",
       status: "Finalizada",
-      acoes: ["Ver detalhes"],
     },
   ];
 
@@ -185,9 +196,41 @@ export default function ContaPsicologo() {
     );
   }
 
+  function ModalAnotacoesConteudo({ consulta, onClose }) {
+    return (
+      <div className="modal-container">
+        <h2 className="title">Anotações de {consulta.nome}</h2>
+
+        <p className="texto-explicativo">
+          Use esta área para realizar anotações importantes sobre o paciente
+          para consultas futuras.
+        </p>
+
+        <p className="data-select">
+          <i className="icon-calendar"></i> Consulta realizada em{" "}
+          <strong>{consulta.data}</strong>
+        </p>
+
+        <label className="label">Anotações</label>
+
+        <textarea
+          className="input textarea-anotacoes"
+          placeholder="Digite aqui..."
+        />
+
+        <div className="buttons-row">
+          <button className="btn-cancelar" onClick={onClose}>
+            Cancelar
+          </button>
+          <button className="btn-confirmar">Salvar</button>
+        </div>
+      </div>
+    );
+  }
+
   function ModalConfirmarConteudo({ consulta, onClose }) {
     return (
-      <div className="modal-confirmar">
+      <div className="modal-container">
         <h2 className="title">Agendamento de consulta</h2>
 
         <p className="texto-explicativo">
@@ -285,7 +328,14 @@ export default function ContaPsicologo() {
             </div>
 
             <div className="acoes">
-              <button className="btn-ver-detalhes">Ver detalhes</button>
+              <button
+                className="btn-ver-detalhes"
+                onClick={() => abrirModalAnotacoes(consulta)}
+              >
+                Anotações
+              </button>
+
+              <button className="btn-ver-detalhes">Acessar chat</button>
             </div>
           </div>
         ))}
@@ -382,6 +432,14 @@ export default function ContaPsicologo() {
           <ModalConfirmarConteudo
             consulta={consultaSelecionada}
             onClose={fecharModal}
+          />
+        )}
+      </ModalPadrao>
+      <ModalPadrao isOpen={modalAnotacoesOpen} onClose={fecharModalAnotacoes}>
+        {consultaAnotacaoSelecionada && (
+          <ModalAnotacoesConteudo
+            consulta={consultaAnotacaoSelecionada}
+            onClose={fecharModalAnotacoes}
           />
         )}
       </ModalPadrao>
