@@ -19,15 +19,15 @@
 1. Clonar o repositório: `git clone https://github.com/DadoDuuh/PI-Senac.git`
 2. Instalar as dependências no back end: `cd api` > `npm i`
 3. Instalar as dependências no front end: `cd site` > `npm i`
-4. Configurar o BD: `cd database/scripts` > `mysql -u root -p saude_mental < schema.sql`
-5. Iniciar o servidor backend: `cd api/src` > `npm run dev`
+4. Configurar o BD: `cd db` > `mysql -u root -p saude_mental < ddl.sql`
+5. Iniciar o servidor backend: `cd api` > `npm run dev`
 6. Iniciar o servidor frontend: `cd site`> `npm start`
 7. Acessar: http://localhost:3000
 
 ## Nota Destaque:
 -Rotas: </br>
  path="/" /> </br>
- path="/login/usuario" /> </br>
+ path="/login" /> </br>
  path="/cadastro" /> </br>
  path="/paginaUsuario" /> </br>
  path="/Agendamentos" /> </br>

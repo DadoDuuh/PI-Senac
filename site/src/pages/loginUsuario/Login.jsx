@@ -11,12 +11,11 @@ export default function Login() {
   const [email, setEmail] = useState('');
   const [senha, setSenha] = useState('');
 
-  useEffect(() => {
-    if (Storage('usuario-logado')) {
-      navigate('/paginaUsuario');
-    }
-  }, [])
-
+  // useEffect(() => {
+  //    if (Storage('usuario-logado')) {
+  //      navigate('/paginaUsuario');
+  //    }
+  //  }, [])
 
   const irParaCadastro = (e) => {
     e.preventDefault();

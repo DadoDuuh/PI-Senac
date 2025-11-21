@@ -59,7 +59,7 @@ export default function Cadastro() {
 
   const irParaLogin = (e) => {
     e.preventDefault();
-    navigate("/login/usuario");
+    navigate("/login");
   };
 
   const handleChange = (e) => {

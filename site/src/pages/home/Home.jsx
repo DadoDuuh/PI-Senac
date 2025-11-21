@@ -18,7 +18,7 @@ function Home() {
               </p>
               <div className="d-grid gap-2 d-sm-flex">
                 <a
-                  href="#agendar"
+                  href="/cadastro"
                   className="btn btn-light text-primary fw-bold"
                 >
                   Agendar Consulta
@@ -155,7 +155,7 @@ function Home() {
                         </span>
                       ))}
                     </div>
-                    <a href="#agendar" className="btn btn-primary w-100">
+                    <a href="/cadastro" className="btn btn-primary w-100">
                       Agendar Consulta
                     </a>
                   </div>

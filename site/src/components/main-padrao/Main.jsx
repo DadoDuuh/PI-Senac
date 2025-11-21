@@ -39,7 +39,7 @@ export default function Main(props) {
 
   const irParaLogin = (e) => {
     e.preventDefault();
-    navigate("/login/usuario");
+    navigate("/login");
   };
 
   const irParaCadastro = (e) => {
