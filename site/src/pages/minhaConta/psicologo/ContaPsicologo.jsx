@@ -1,4 +1,4 @@
-import "./Conta.scss";
+import "./ContaPsicologo.scss";
 import lapisIcon from "../../../assets/images/lapis-icon.svg";
 import NavCategoria from "../../../components/nav-categoria";
 import { useState } from "react";

@@ -7,7 +7,7 @@ export async function listarConsultas() {
 
 export async function agendarConsulta(consulta) {
     const [result] = await pool.query(
-        'INSERT INTO agendamentos (usuario_id, psicologo_id, data_hora) VALUES (?, ?, ?)',
+        'INSERT INTO agendamentos (paciente_id, psicologo_id, data_hora) VALUES (?, ?, ?)',
         [consulta.pacienteId, consulta.psicologoId, consulta.dataHora]
     );
     return result.insertId;

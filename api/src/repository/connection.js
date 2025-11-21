@@ -11,6 +11,15 @@ const pool = mysql.createPool({
     queueLimit: 0
 });
 
+pool.getConnection()
+    .then(connection => {
+        console.log('✅ Conectado ao banco:', process.env.MYSQL_DB);
+        connection.release();
+    })
+    .catch(err => {
+        console.error('❌ Erro ao conectar no banco:', err.message);
+    });
+
 console.log('Pool de conexões MySQL criado com sucesso!');
 
 export { pool }

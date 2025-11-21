@@ -11,10 +11,10 @@ export default function Main(props) {
   const isAuthRoute = [
     "/login",
     "/cadastro",
-    "/paginaUsuario",
+    "/paginaPaciente",
     "/agendamentos",
   ].some((route) => location.pathname.startsWith(route));
-  const isUserPage = location.pathname.startsWith("/paginaUsuario");
+  const isUserPage = location.pathname.startsWith("/paginaPaciente");
   const isAgendamentosPage = location.pathname.startsWith("/agendamentos");
 
   useEffect(() => {
@@ -57,9 +57,9 @@ export default function Main(props) {
     navigate("/agendamentos");
   };
 
-    const irParaPaginaUsuario = (e) => {
+    const irParaPaginaPaciente = (e) => {
     e.preventDefault();
-    navigate("/paginaUsuario");
+    navigate("/paginaPaciente");
   };
 
   const toggleMobileMenu = () => {
@@ -141,7 +141,7 @@ export default function Main(props) {
 
             {isAgendamentosPage && (
               <div
-                onClick={irParaPaginaUsuario}
+                onClick={irParaPaginaPaciente}
                 className="btn btn-outline-primary btn-login"
               >
                 Agendar Consulta

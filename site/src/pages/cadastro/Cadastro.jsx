@@ -2,9 +2,9 @@ import React from "react";
 import "./Cadastro.scss";
 
 import { cadastroPsicologo } from '../../api/psicologoApi';
-import { cadastroUsuario } from '../../api/usuarioApi';
+import { cadastroPaciente } from '../../api/pacienteApi';
 import { useNavigate } from "react-router-dom";
-import { useState, useEffect } from "react";
+import { useState } from "react";
 
 export default function Cadastro() {
   const navigate = useNavigate();
@@ -30,17 +30,15 @@ export default function Cadastro() {
 
       if(isPsicologo) {
         const r = await cadastroPsicologo(formData.name, formData.crp, formData.email, formData.password);
-
-        Storage('psicologo-logado', r);
-        
-        navigate('/paginaPsicologo');
+        //Storage('psicologo-logado', r);
+        navigate('/login');
       }
       else {
-        const r = await cadastroUsuario(formData.name, formData.cpf, formData.email, formData.password, formData.phone);
-
-        Storage('usuario-logado', r);
-        
-        navigate('/paginaUsuario');
+        console.log("🟢 Iniciando cadastro...");
+        const r = await cadastroPaciente(formData.name, formData.cpf, formData.email, formData.password, formData.phone);
+        console.log("✅ Cadastro concluído:", r);
+        //Storage('usuario-logado', r);
+        navigate('/login');
       }
     }
     catch (err) {
