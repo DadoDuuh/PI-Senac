@@ -7,6 +7,7 @@ import PaginaPaciente from "./pages/paginaPaciente/PaginaPaciente.jsx";
 import Agendamentos from "./pages/Agendamentos/Agendamentos.jsx";
 import ContaPaciente from "./pages/minhaConta/paciente/ContaPaciente.jsx";
 import ContaPsicologo from "./pages/minhaConta/psicologo/ContaPsicologo.jsx";
+import ChatScreen from "./pages/chat/Chat.jsx";
 
 export default function RoutesComponent() {
   return (
@@ -18,6 +19,7 @@ export default function RoutesComponent() {
       <Route path="/Agendamentos" element={<Agendamentos />} />
       <Route path="/conta/paciente" element={<ContaPaciente />} />
       <Route path="/conta/psicologo" element={<ContaPsicologo />} />
+      <Route path="/chat" element={<ChatScreen />} />
     </Routes>
   );
 }
