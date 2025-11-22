@@ -1,18 +1,11 @@
 import { pool } from './connection.js';
 
-export async function findPsicologoByEmail(email) {
-    const [rows] = await pool.query(
-        'SELECT * FROM psicologos WHERE email = ?',
-        [email]
-    );
-    return rows[0];
-}
-
-export async function createPsicologo(psicologo) {
+export async function createPsicologo(usuarioId, nome, crp, especialidade) {
     const [result] = await pool.query(
-        'INSERT INTO psicologos (nome, crp, email, senha, especialidade) VALUES (?, ?, ?, ?, ?)',
-        [psicologo.nome, psicologo.crp, psicologo.email, psicologo.senha, psicologo.especialidade]
+        'INSERT INTO psicologos (usuario_id, nome, crp, especialidade) VALUES (?, ?, ?, ?)',
+        [usuarioId, nome, crp, especialidade]
     );
+    console.log("psicologoId criado:", result.insertId);
     return result.insertId;
 }
 
@@ -25,9 +18,19 @@ export async function getAvailablePsicologos() {
 
 export async function findPsicologoById(id) {
     const [rows] = await pool.query(
-        'SELECT * FROM psicologos WHERE id = ?',
-        [id]
+        'SELECT * FROM psicologos WHERE id = ?', [id]
     );
     return rows[0]; 
 }
 
+//EXEMPLO:>>>>>
+//
+// pegar id do psicologo
+// export async function idPsicologoDenuncia(denuncia) {
+//     const comando = `select id_psicologo
+//                         from tb_psicologo
+//                     where nm_psicologo = ? and ds_email = ?`
+
+//     const [resposta] = await con.query(comando, [denuncia.nomePsicologo.trim(), denuncia.emailPsicologo.trim()]);
+//     return resposta[0];
+// }

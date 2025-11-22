@@ -29,7 +29,7 @@
  path="/" /> </br>
  path="/login" /> </br>
  path="/cadastro" /> </br>
- path="/paginaUsuario" /> </br>
+ path="/paginaPaciente" /> </br>
  path="/Agendamentos" /> </br>
  (Certificar-se de que tais string sejam colocadas na URL da página)
 

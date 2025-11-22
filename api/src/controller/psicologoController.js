@@ -1,5 +1,6 @@
 import { Router } from 'express';
-import { findPsicologoByEmail, createPsicologo, getAvailablePsicologos } from '../repository/psicologoRepository.js';
+import { createPsicologo, getAvailablePsicologos } from '../repository/psicologoRepository.js';
+import {findUsuarioByEmail, createUsuario} from '../repository/usuarioRepository.js';
 import bcrypt from 'bcrypt';
 import jwt from 'jsonwebtoken';
 
@@ -8,7 +9,7 @@ const router = Router();
 router.post('/login', async (req, res) => {
   try {
       const { email, senha } = req.body;
-      const psicologo = await findPsicologoByEmail(email);
+      const psicologo = await findUsuarioByEmail(email);
 
       if (!psicologo) {
           return res.status(404).send('Psicólogo não encontrado');
@@ -33,34 +34,30 @@ router.post('/login', async (req, res) => {
 
 router.post('/cadastro', async (req, res) => {
   try {
-    const { nome, crp, email, senha, especialidade } = req.body;
+    const { nome, email, senha, crp, especialidade } = req.body;
 
-    const psicologoExistente = await findPsicologoByEmail(email);
-    if (psicologoExistente) {
+    const usuarioExistente = await findUsuarioByEmail(email);
+    if (usuarioExistente) {
       return res.status(400).json({ error: 'Email já cadastrado' });
     }
 
     const hashedPassword = await bcrypt.hash(senha, 10);
 
-    const novoPsicologo = {
-      nome,
-      crp,
-      email,
-      senha: hashedPassword,
-      especialidade
-    };
+    const usuarioId = await createUsuario(email, hashedPassword, 'psicologo');
+    console.log("usuarioId psicólogo(a) criado: " + usuarioId);
 
-    const psicologoId = await createPsicologo(novoPsicologo);
+    const psicologoId = await createPsicologo(usuarioId, nome, crp, especialidade);
+    console.log("usuarioId psicólogo(a) criado: " + usuarioId);
 
     const token = jwt.sign(
-      { id: psicologoId, tipo: 'psicologo' },
+      { id: usuarioId, tipo: 'psicologo' },
       process.env.JWT_SECRET,
       { expiresIn: '1h' }
     );
-
-    res.status(201).json({ token });
+    res.status(201).json({ token, usuarioId, psicologoId });
   } catch (error) {
-    res.status(500).send(error.message);
+    console.error("Erro no cadastro: ", error);
+    res.status(500).json({ error: error.message });
   }
 });
 
