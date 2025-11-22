@@ -1,11 +1,33 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
+import { buscarPerfilPaciente } from "../../api/pacienteApi";
 import "./PaginaPaciente.scss";
 
 export default function PaginaPaciente() {
   const navigate = useNavigate();
   const [searchTerm, setSearchTerm] = useState("");
   const [selectedSpecialty, setSelectedSpecialty] = useState("all");
+  const [paciente, setPaciente] = useState(null);
+  const [loading, setLoading] = useState(true);
+
+  // Busca dados do paciente ao carregar a página
+  useEffect(() => {
+    async function carregarPerfil() {
+      try {
+        const usuarioId = localStorage.getItem('usuarioId');
+        if (!usuarioId) {
+          navigate('/login');
+          return;
+        }
+        const dados = await buscarPerfilPaciente(usuarioId);
+        setPaciente(dados);
+      } catch (error) {
+        alert("Erro ao carregar seus dados");
+      } finally {
+        setLoading(false);
+      }
+    } carregarPerfil();
+  }, [navigate]);
 
   const psicologos = [
     {
@@ -77,10 +99,23 @@ export default function PaginaPaciente() {
     navigate(`/agendar/${psychologistId}`);
   };
 
+  if (loading) {
+    return (
+        <div className="patient-home">
+          <div className="loading-container">
+            <p>Carregando...</p>
+          </div>
+        </div>
+    );
+  }
+
   return (
     <div className="patient-home">
       <header className="patient-header">
         <div className="container">
+          {paciente && (
+                <h2>Olá, {paciente.nome}!</h2>
+          )}
           <h1>Encontre seu Psicólogo</h1>
           <p className="subtitle">Agende sua consulta com um de nossos profissionais voluntários</p>
           

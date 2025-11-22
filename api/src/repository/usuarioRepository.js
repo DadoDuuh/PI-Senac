@@ -1,10 +1,15 @@
 import {pool} from "./connection.js";
 
 export async function findUsuarioByEmail(email) {
-    const [rows] = await pool.query(
-        'SELECT * FROM usuarios WHERE email = ?', [email]
-    );
-    return rows[0];
+    try {
+        const [rows] = await pool.query(
+            'SELECT * FROM usuarios WHERE email = ?', [email]
+        );
+        return rows[0];
+    } catch (error) {
+        console.error("Repository: erro na query: ", error);
+        throw error;
+    }
 }
 
 export async function createUsuario(email, senha, tipo) {

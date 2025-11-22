@@ -1,17 +1,4 @@
-import {api} from './config.js'
-
-// export async function loginPaciente(email, senha) {
-//     console.log("Entrou no loginPaciente")
-//     const resposta = await api.post('/pacientes/login', {
-//         email: email,
-//         senha: senha
-//     });
-//     console.log("email loginPaciente: " + email);
-//     console.log("senha loginPaciente: " + senha);
-//     console.log("resposta loginPaciente: " + resposta);
-//     console.log("resposta.data: " + resposta.data);
-//     return resposta.data;
-// }
+import { api } from './config.js'
 
 export async function cadastroPaciente(nome, cpf, email, senha, telefone) {
     console.log("FRONTEND: Entrou no cadastroPaciente");
@@ -33,4 +20,10 @@ export async function cadastroPaciente(nome, cpf, email, senha, telefone) {
         console.error("❌ ERRO NA REQUISIÇÃO:", error.response?.data || error.message);
         throw error;
     }
+}
+
+export async function buscarPerfilPaciente(usuarioId) {
+    console.log("🔍 Buscando perfil do paciente:", usuarioId);
+    const resposta = await api.get(`/pacientes/perfil/${usuarioId}`);
+    return resposta.data;
 }

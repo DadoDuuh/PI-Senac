@@ -1,32 +1,10 @@
-import {Router} from 'express';
-import {createPaciente} from '../repository/pacienteRepository.js';
-import {findUsuarioByEmail, createUsuario} from '../repository/usuarioRepository.js';
+import { Router } from 'express';
+import { createPaciente, findPacienteByUsuarioId } from '../repository/pacienteRepository.js';
+import { findUsuarioByEmail, createUsuario } from '../repository/usuarioRepository.js';
 import bcrypt from 'bcrypt';
 import jwt from 'jsonwebtoken';
 
 const router = Router();
-
-router.post('/login', async (req, res) => {
-    try {
-        const {email, senha} = req.body;
-        const paciente = await findUsuarioByEmail(email);
-        if (!paciente) {
-            return res.status(404).send('Paciente não encontrado');
-        }
-        const senhaValida = await bcrypt.compare(senha, paciente.senha);
-        if (!senhaValida) {
-            return res.status(401).send('Senha inválida');
-        }
-        const token = jwt.sign(
-            {id: paciente.id, tipo: 'paciente'},
-            process.env.JWT_SECRET,
-            {expiresIn: '1h'}
-        );
-        res.status(200).json({token});
-    } catch (error) {
-        res.status(500).send(error.message);
-    }
-});
 
 router.post('/cadastro', async (req, res) => {
     try {
@@ -57,6 +35,20 @@ router.post('/cadastro', async (req, res) => {
     } catch (error) {
         console.error("Erro no cadastro: ", error);
         res.status(500).json({error: error.message});
+    }
+});
+
+router.get('/perfil/:id', async (req, res) => {
+    try {
+        const { id } = req.params;
+        const paciente = await findPacienteByUsuarioId(id);
+        if (!paciente) {
+            return res.status(404).json({ error: 'Paciente não encontrado' });
+        }
+        res.status(200).json(paciente);
+    } catch (error) {
+        console.error("❌ Erro ao buscar perfil:", error);
+        res.status(500).json({ error: error.message });
     }
 });
 

@@ -13,7 +13,7 @@ export default function Login() {
 
   // useEffect(() => {
   //    if (Storage('usuario-logado')) {
-  //      navigate('/paginaUsuario');
+  //      navigate('/paginaPaciente');
   //    }
   //  }, [])
 
@@ -22,17 +22,31 @@ export default function Login() {
     navigate("/cadastro");
   };
 
-  async function entrarClick() {
+  async function entrarClick(e) {
+    e.preventDefault();
+
     try {
-      const r = await loginUsuario(email, senha);
+        const resultado = await loginUsuario(email, senha);
 
-      Storage('usuario-logado', r);
+        localStorage.setItem('token', resultado.token);
+        localStorage.setItem('usuarioId', resultado.usuarioId);
+        localStorage.setItem('tipo', resultado.tipo);
 
-      navigate('/paginaUsuario');
-    }
-    catch (err) {
+        Storage('usuario-logado', resultado);
+
+        // Redireciona conforme o tipo:
+        if (resultado.tipo === 'paciente') {
+          navigate('/paginaPaciente');
+        } else if (resultado.tipo === 'psicologo') {
+          navigate('/contaPsicologo');
+      }
+    } catch (err) {
       if (err.response?.status === 401) {
-        alert(err.response?.data.erro);
+        alert('Email ou senha inválidos');
+      } else if (err.response?.status === 404) {
+        alert('Usuário não encontrado');
+      } else {
+        alert('Erro ao fazer login.');
       }
     }
   }

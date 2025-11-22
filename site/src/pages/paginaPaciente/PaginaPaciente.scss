@@ -292,4 +292,15 @@ $transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
   .psychologists-grid {
     grid-template-columns: 1fr;
   }
+  .loading-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+
+    p {
+      font-size: 1.2rem;
+      color: #665;
+    }
+  }
 }

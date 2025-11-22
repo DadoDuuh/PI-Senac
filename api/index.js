@@ -2,6 +2,7 @@ import 'dotenv/config';
 import express from 'express';
 import cors from 'cors';
 
+import usuarioController from "./src/controller/usuarioController.js";
 import pacienteController from './src/controller/pacienteController.js';
 import psicologoController from './src/controller/psicologoController.js';
 import consultaController from './src/controller/consultaController.js';
@@ -21,6 +22,7 @@ app.use((req, res, next) => {
 });
 
 // Rotas (controllers)
+app.use('/usuarios', usuarioController);
 app.use('/pacientes', pacienteController);
 app.use('/psicologos', psicologoController);
 app.use('/consultas', consultaController);
