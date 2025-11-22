@@ -2,11 +2,11 @@
 
 ## Grupo 31:
 
-- Eduardo Cesar Silva de Avila
-- Pedro Athayde Alves
-- Pedro Spigariol Colbert
-- Sônia Gomes Caldas
-- Victor de Paula Freitas Simões
+- Eduardo Cesar S.
+- Pedro Athayde A.
+- Pedro Spigariol C.
+- Sônia C.
+- Victor de Paula S.
 
 ## Pré-requisitos:
 
