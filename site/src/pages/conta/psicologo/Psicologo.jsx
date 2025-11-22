@@ -124,7 +124,7 @@ export default function Psicologo() {
 
   let usuarioObj = {
     id: 1,
-    nome: psicologo?.nome,
+    nome: psicologo?.nome || "Sicrana",
     fotoPerfil: "https://i.pravatar.cc/300?img=5",
     categorias: ["Ansiedade", "Depressão", "Autoestima"],
     voluntariaDesde: 2022,
