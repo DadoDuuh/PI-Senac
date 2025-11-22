@@ -1,9 +1,9 @@
 import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { buscarPerfilPaciente } from "../../api/pacienteApi";
-import "./PaginaPaciente.scss";
+import "./Busca.scss";
 
-export default function PaginaPaciente() {
+export default function Busca() {
   const navigate = useNavigate();
   const [searchTerm, setSearchTerm] = useState("");
   const [selectedSpecialty, setSelectedSpecialty] = useState("all");

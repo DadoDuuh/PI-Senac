@@ -13,7 +13,7 @@ export default function Login() {
 
   // useEffect(() => {
   //    if (Storage('usuario-logado')) {
-  //      navigate('/paginaPaciente');
+  //      navigate('/busca');
   //    }
   //  }, [])
 
@@ -36,9 +36,9 @@ export default function Login() {
 
         // Redireciona conforme o tipo:
         if (resultado.tipo === 'paciente') {
-          navigate('/paginaPaciente');
+          navigate('/busca');
         } else if (resultado.tipo === 'psicologo') {
-          navigate('/contaPsicologo');
+          navigate('/conta/psicologo');
       }
     } catch (err) {
       if (err.response?.status === 401) {

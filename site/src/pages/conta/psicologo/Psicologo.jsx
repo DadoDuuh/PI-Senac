@@ -1,10 +1,10 @@
-import "./ContaPsicologo.scss";
+import "./Psicologo.scss";
 import lapisIcon from "../../../assets/images/lapis-icon.svg";
 import NavCategoria from "../../../components/nav-categoria";
 import { useState } from "react";
 import ModalPadrao from "../../../components/modal-padrao";
 
-export default function ContaPsicologo() {
+export default function Psicologo() {
   const [modalOpen, setModalOpen] = useState(false);
   const [consultaSelecionada, setConsultaSelecionada] = useState(null);
   const [modalAnotacoesOpen, setModalAnotacoesOpen] = useState(false);

@@ -1,8 +1,8 @@
-import "./ContaPaciente.scss";
+import "./Paciente.scss";
 import lapisIcon from "../../../assets/images/lapis-icon.svg";
 import NavCategoria from "../../../components/nav-categoria";
 
-export default function ContaPaciente() {
+export default function Paciente() {
   const consultasProximas = [
     {
       id: 1,
