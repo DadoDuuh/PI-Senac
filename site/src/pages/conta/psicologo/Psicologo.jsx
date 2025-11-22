@@ -1,8 +1,10 @@
 import "./Psicologo.scss";
 import lapisIcon from "../../../assets/images/lapis-icon.svg";
 import NavCategoria from "../../../components/nav-categoria";
-import { useState } from "react";
+import React, { useEffect, useState } from "react";
 import ModalPadrao from "../../../components/modal-padrao";
+import { buscarPerfilPsicologo } from "../../../api/psicologoApi";
+import { useNavigate } from "react-router-dom";
 
 export default function Psicologo() {
   const [modalOpen, setModalOpen] = useState(false);
@@ -10,6 +12,28 @@ export default function Psicologo() {
   const [modalAnotacoesOpen, setModalAnotacoesOpen] = useState(false);
   const [consultaAnotacaoSelecionada, setConsultaAnotacaoSelecionada] =
     useState(null);
+  const navigate = useNavigate();
+  const [psicologo, setPsicologo] = useState(null);
+  const [loading, setLoading] = useState(true);
+
+  // Busca dados do psicólogo ao carregar a página
+  useEffect(() => {
+    async function carregarPerfil() {
+      try {
+        const usuarioId = localStorage.getItem('usuarioId');
+        if (!usuarioId) {
+          navigate('/login');
+          return;
+        }
+        const dados = await buscarPerfilPsicologo(usuarioId);
+        setPsicologo(dados);
+      } catch (error) {
+        alert("Erro ao carregar seus dados");
+      } finally {
+        setLoading(false);
+      }
+    } carregarPerfil();
+  }, [navigate]);
 
   function abrirModalConfirmar(consulta) {
     setConsultaSelecionada(consulta);
@@ -98,9 +122,9 @@ export default function Psicologo() {
     },
   ];
 
-  const usuarioObj = {
+  let usuarioObj = {
     id: 1,
-    nome: "Fulana da Silva",
+    nome: psicologo?.nome,
     fotoPerfil: "https://i.pravatar.cc/300?img=5",
     categorias: ["Ansiedade", "Depressão", "Autoestima"],
     voluntariaDesde: 2022,

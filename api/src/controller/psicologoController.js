@@ -1,5 +1,5 @@
 import { Router } from 'express';
-import { createPsicologo, getAvailablePsicologos } from '../repository/psicologoRepository.js';
+import { createPsicologo, findPsicologoByUsuarioId, getAvailablePsicologos } from '../repository/psicologoRepository.js';
 import { findUsuarioByEmail, createUsuario } from '../repository/usuarioRepository.js';
 import bcrypt from 'bcrypt';
 import jwt from 'jsonwebtoken';
@@ -35,6 +35,20 @@ router.post('/cadastro', async (req, res) => {
   }
 });
 
+router.get('/perfil/:id', async (req, res) => {
+    try {
+        const { id } = req.params;
+        const psicologo = await findPsicologoByUsuarioId(id);
+        if (!psicologo) {
+            return res.status(404).json({ error: 'Psicólogo(a) não encontrado(a).' });
+        }
+        res.status(200).json(psicologo);
+    } catch (error) {
+        console.error("❌ Erro ao buscar perfil:", error);
+        res.status(500).json({ error: error.message });
+    }
+});
+
 router.get('/disponiveis', async (req, resp) => {
     try {
         const psicologos = await getAvailablePsicologos();
@@ -44,6 +58,5 @@ router.get('/disponiveis', async (req, resp) => {
         resp.status(500).send(error.message);
     }
 })
-
 
 export default router;

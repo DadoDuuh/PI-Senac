@@ -23,6 +23,13 @@ export async function findPsicologoById(id) {
     return rows[0]; 
 }
 
+export async function findPsicologoByUsuarioId(usuarioId) {
+    const [rows] = await pool.query(
+        'SELECT * FROM psicologos WHERE usuario_id = ?', [usuarioId]
+    );
+    return rows[0];
+}
+
 //EXEMPLO:>>>>>
 //
 // pegar id do psicologo
