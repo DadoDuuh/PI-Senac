@@ -10,6 +10,8 @@ import {
   cancelarConsulta,
   confirmarConsulta
 } from "../../../api/consultaApi";
+import { ToastContainer, toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 
 export default function Psicologo() {
   const navigate = useNavigate();
@@ -54,7 +56,7 @@ export default function Psicologo() {
         setConsultas(dadosConsultas);
 
       } catch (error) {
-        alert("Erro ao carregar seus dados");
+        toast.error("Erro ao carregar seus dados");
       } finally {
         setLoading(false);
       }
@@ -136,7 +138,7 @@ export default function Psicologo() {
 
     try {
       await cancelarConsulta(agendamentoId);
-      alert("Consulta cancelada com sucesso!");
+      toast.success("Consulta cancelada com sucesso!");
 
       // Recarrega as consultas
       const usuarioId = localStorage.getItem('usuarioId');
@@ -144,7 +146,7 @@ export default function Psicologo() {
       setConsultas(dadosConsultas);
     } catch (error) {
       console.error("Erro ao cancelar:", error);
-      alert("Erro ao cancelar consulta");
+      toast.error("Erro ao cancelar consulta");
     }
   };
 
@@ -152,7 +154,7 @@ export default function Psicologo() {
     if (linkAtendimento) {
       window.open(linkAtendimento, '_blank');
     } else {
-      alert("Consulta ainda não foi confirmada");
+      toast.warning("Consulta ainda não foi confirmada");
     }
   };
 
@@ -268,12 +270,12 @@ export default function Psicologo() {
     const handleConfirmar = async () => {
       try {
         if (!linkAtendimento.trim()) {
-          alert("Por favor, insira o link da reunião");
+          toast.warning("Por favor, insira o link da reunião");
           return;
         }
 
         await confirmarConsulta(consulta.id, linkAtendimento);
-        alert("Consulta confirmada com sucesso!");
+        toast.success("Consulta confirmada com sucesso!");
 
         // Recarrega consultas
         const usuarioId = localStorage.getItem('usuarioId');
@@ -283,7 +285,7 @@ export default function Psicologo() {
         onClose();
       } catch (error) {
         console.error("Erro ao confirmar:", error);
-        alert("Erro ao confirmar consulta");
+        toast.error("Erro ao confirmar consulta");
       }
     };
 
