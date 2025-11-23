@@ -238,7 +238,7 @@ export default function Cadastro() {
                     type="text"
                     className="form-control input-field"
                     name="crp"
-                    placeholder="Seu número de registro no CRP"
+                    placeholder="Seu n.º de registro no CRP"
                     value={formData.crp}
                     onChange={handleChange}
                     required
