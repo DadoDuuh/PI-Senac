@@ -6,14 +6,14 @@ import { useNavigate } from "react-router-dom";
 import { buscarPerfilPaciente } from "../../../api/pacienteApi";
 import { buscarConsultasPaciente, cancelarConsulta } from "../../../api/consultaApi";
 
-
 export default function Paciente() {
   const navigate = useNavigate();
   const [paciente, setPaciente] = useState(null);
   const [consultas, setConsultas] = useState([]);
   const [loading, setLoading] = useState(true);
 
-  useEffect(() => {
+    // Busca dados do paciente ao carregar a página
+    useEffect(() => {
     async function carregarDados() {
       try {
         const usuarioId = localStorage.getItem('usuarioId');
@@ -21,15 +21,24 @@ export default function Paciente() {
           navigate('/login');
           return;
         }
-
         // Busca perfil do paciente
         const dadosPaciente = await buscarPerfilPaciente(usuarioId);
         setPaciente(dadosPaciente);
 
         // Busca consultas do paciente
         const dadosConsultas = await buscarConsultasPaciente(usuarioId);
-        console.log("Consultas do paciente:", dadosConsultas);
         setConsultas(dadosConsultas);
+
+          // Log de cada consulta
+          dadosConsultas.forEach((c, i) => {
+              console.log(`Consulta ${i + 1}:`, {
+                  id: c.id,
+                  psicologo: c.psicologo_nome,
+                  data: c.data_hora,
+                  status: c.status,
+                  link: c.link_atendimento
+              });
+          });
 
       } catch (error) {
         console.error("Erro ao carregar dados:", error);
@@ -41,13 +50,14 @@ export default function Paciente() {
     carregarDados();
   }, [navigate]);
 
-  // Separa consultas em próximas e históricas
+  // Próximas consultas CONFIRMADAS/PENDENTES
   const consultasProximas = consultas.filter(c =>
-      c.status === 'confirmado' && new Date(c.data_hora) > new Date()
+      (c.status === 'confirmado' || c.status === 'pendente') && new Date(c.data_hora) > new Date()
   );
 
+  // Histórico de consultas CONFIRMADAS/CANCELADAS
   const consultasHistorico = consultas.filter(c =>
-      c.status === 'confirmado' && new Date(c.data_hora) <= new Date()
+      (c.status === 'confirmado' && new Date(c.data_hora) <= new Date()) || c.status === 'cancelado'
   );
 
   const handleCancelar = async (agendamentoId) => {
@@ -128,7 +138,13 @@ export default function Paciente() {
                       <i className="icon-calendar"></i> {formatarDataHora(consulta.data_hora)}
                     </p>
                     <p className="info">
-                      50 min · {consulta.link_atendimento ? 'Online - PsicoAcolher' : 'Aguardando confirmação'}
+                      50 min · {
+                        consulta.status === 'pendente'
+                            ? '⏳ Aguardando confirmação do psicólogo'
+                            : consulta.link_atendimento
+                                ? '✅ Online - PsicoAcolher'
+                                : '⏳ Aguardando link do psicólogo'
+                      }
                     </p>
                   </div>
                 </div>
@@ -184,32 +200,39 @@ export default function Paciente() {
                   />
                   <div>
                     <h3>{consulta.psicologo_nome}</h3>
-                    <p className="especialidade">{consulta.especialidade}</p>
                     <p className="data">
                       <i className="icon-calendar"></i> {formatarDataHora(consulta.data_hora)}
                     </p>
                     <p className="info">
-                      50 min · {consulta.link_atendimento ? 'Online' : 'Presencial'}
+                      50 min · Online
                     </p>
-                    <p className="info" style={{ marginTop: "6px", color: "#6c757d" }}>
-                      ✔ Finalizada
+                    <p
+                        className="info"
+                        style={{ marginTop: "6px", color: "#6c757d"
+                        }}
+                    >
+                        { consulta.status === 'cancelado' ? '❌ Cancelada' : '✔ Finalizada' }
                     </p>
                   </div>
                 </div>
 
                 <div className="acoes">
-                  <button
-                      className="btn-ver-detalhes"
-                      onClick={() => alert('Funcionalidade em desenvolvimento')}
-                  >
-                    Ver detalhes
-                  </button>
-                  <button
-                      className="btn-acessar-chat"
-                      onClick={() => navigate('/chat')}
+                    {consulta.status === 'confirmado' && (
+                        <>
+                          <button
+                            className="btn-ver-detalhes"
+                            onClick={() => alert('Funcionalidade em desenvolvimento')}
+                            >
+                            Ver detalhes
+                        </button>
+                        <button
+                            className="btn-acessar-chat"
+                            onClick={() => navigate('/chat')}
                   >
                     Acessar chat
                   </button>
+                  </>
+                    )}
                 </div>
               </div>
           ))}
@@ -242,7 +265,7 @@ export default function Paciente() {
 
             <div className="usu-info">
               <h1>{paciente?.nome || "Paciente"}</h1>
-              <p className="subtitle">Membro desde 2022</p>
+              <p className="subtitle">Membro desde 2025</p>
               <button className="btn-detalhes">Mais detalhes</button>
             </div>
           </div>
@@ -270,7 +293,7 @@ export default function Paciente() {
                     ),
                     conteudo: renderProximasConsultas,
                   },
-                  Histórico: {
+                  "Histórico": {
                     nome: (
                         <div>
                           <p style={{ margin: 0 }}>

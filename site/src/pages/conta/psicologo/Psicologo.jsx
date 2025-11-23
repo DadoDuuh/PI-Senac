@@ -1,44 +1,38 @@
 import "./Psicologo.scss";
 import lapisIcon from "../../../assets/images/lapis-icon.svg";
 import NavCategoria from "../../../components/nav-categoria";
-import React, { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import ModalPadrao from "../../../components/modal-padrao";
 import { buscarPerfilPsicologo } from "../../../api/psicologoApi";
 import { useNavigate } from "react-router-dom";
-import {
-  buscarConsultasPsicologo,
-  cancelarConsulta,
-  confirmarConsulta
-} from "../../../api/consultaApi";
+import { buscarConsultasPsicologo, cancelarConsulta, confirmarConsulta } from "../../../api/consultaApi";
 
 export default function Psicologo() {
   const navigate = useNavigate();
   const [psicologo, setPsicologo] = useState(null);
-  const [pacientes, setPacientes] = useState(null);
   const [consultas, setConsultas] = useState([]);
   const [loading, setLoading] = useState(true);
   const [modalOpen, setModalOpen] = useState(false);
   const [consultaSelecionada, setConsultaSelecionada] = useState(null);
   const [modalAnotacoesOpen, setModalAnotacoesOpen] = useState(false);
-  const [consultaAnotacaoSelecionada, setConsultaAnotacaoSelecionada] =
-    useState(null);
+  const [consultaAnotacaoSelecionada, setConsultaAnotacaoSelecionada] = useState(null);
 
   // Busca dados do psicólogo ao carregar a página
   useEffect(() => {
-    async function carregarPerfil() {
+    async function carregarDados() {
       try {
         const usuarioId = localStorage.getItem('usuarioId');
         if (!usuarioId) {
           navigate('/login');
           return;
         }
-
+        // Busca perfil do psicólogo
         const dadosPsicologo = await buscarPerfilPsicologo(usuarioId);
         setPsicologo(dadosPsicologo);
 
+        // Busca consultas do psicólogo
         const dadosConsultas = await buscarConsultasPsicologo(usuarioId);
-        console.log("Consultas do psicólogo:", dadosConsultas);
-        console.log("Quantidade de consultas:", dadosConsultas.length);
+        setConsultas(dadosConsultas)
 
         // Log de cada consulta
         dadosConsultas.forEach((c, i) => {
@@ -51,48 +45,15 @@ export default function Psicologo() {
           });
         });
 
-        setConsultas(dadosConsultas);
-
       } catch (error) {
+        console.error("Erro ao carregar pacientes:", error);
         alert("Erro ao carregar seus dados");
       } finally {
         setLoading(false);
       }
     }
-    carregarPerfil();
-  }, [navigate]);
-
-  useEffect(() => {
-    async function carregarDados() {
-      try {
-        const usuarioId = localStorage.getItem('usuarioId');
-        if (!usuarioId) {
-          navigate('/login');
-          return;
-        }
-        const dadosPacientes = await buscarConsultasPsicologo(usuarioId);
-        console.log("🔍 Pacientes do banco:", dadosPacientes);
-
-        // Mocks:
-        const gerarConsistente = (id, max) => {
-          return (id * 7 + 13) % max;
-        };
-
-        const pacientesFormatados = dadosPacientes.map(paciente => ({
-          id: paciente.id,
-          name: paciente.nome,
-          data: "28/03/2023 às 10:00",
-          image: `https://i.pravatar.cc/300?img=${paciente.id}`,
-          verified: true
-        }));
-        console.log("✅ Pacientes formatados:", pacientesFormatados);
-        setPacientes(pacientesFormatados);
-      } catch (error) {
-        console.error("Erro ao carregar pacientes:", error);
-      }
-    }
     carregarDados();
-  }, []);
+  }, [navigate]);
 
   function abrirModalConfirmar(consulta) {
     setConsultaSelecionada(consulta);
@@ -114,18 +75,18 @@ export default function Psicologo() {
     setConsultaAnotacaoSelecionada(null);
   }
 
-  // Próximas consultas [confirmadas]:
+  // Próximas consultas CONFIRMADAS/PENDENTES:
   const consultasProximas = consultas.filter(c =>
-      c.status === 'confirmado' && new Date(c.data_hora) > new Date()
+      (c.status === 'confirmado' || c.status === 'pendente') && new Date(c.data_hora) > new Date()
   );
 
-  // Histórico de consultas [realizadas]:
+  // Histórico de consultas CONFIRMADAS/CANCELADAS:
   const consultasHistorico = consultas.filter(c =>
-      c.status === 'confirmado' && new Date(c.data_hora) <= new Date()
+      (c.status === 'confirmado' && new Date(c.data_hora) <= new Date()) || c.status === 'cancelado'
   );
 
-  // Solicitações de consulta pendentes [de confirmação]
-  const consultasSolicitacoes = consultas.filter(c =>
+  // Solicitações de consulta PENDENTES [de confirmação]
+  const solicitacoesPendentes = consultas.filter(c =>
       c.status === 'pendente'
   );
 
@@ -152,7 +113,7 @@ export default function Psicologo() {
     if (linkAtendimento) {
       window.open(linkAtendimento, '_blank');
     } else {
-      alert("Consulta ainda não foi confirmada");
+      alert("Link ainda não disponível");
     }
   };
 
@@ -168,17 +129,28 @@ export default function Psicologo() {
   };
 
   let usuarioObj = {
-    id: 1,
+    id: psicologo?.id || 1,
     nome: psicologo?.nome || "Sicrana",
-    fotoPerfil: "https://i.pravatar.cc/300?img=5",
-    categorias: ["Ansiedade", "Depressão", "Autoestima"],
-    voluntariaDesde: 2022,
-    aceitandoNovasSolicitacoes: true,
-    biografia:
-      "Especialista em ansiedade e depressão, com abordagem humanista e 10 anos de experiência clínica.",
+    fotoPerfil: `https://i.pravatar.cc/300?img=${psicologo?.id || 5}`,
+    crp: psicologo?.crp || "CRP-12/345678",
+    especialidade: psicologo?.especialidade || "Psicologia Clínica",
+    categorias: psicologo?.especialidade
+        ? [psicologo.especialidade, "Terapia", "Acolhimento"]
+        : ["Ansiedade", "Depressão", "Autoestima"],
+    voluntariaDesde: 2025,
+    aceitandoNovasSolicitacoes: psicologo?.disponivel ?? true,
+    biografia: `Especialização em ${psicologo?.especialidade || "diversas abordagens"}, com experiência em atendimento clínico e acolhimento emocional.`,
   };
 
   function renderProximasConsultas() {
+      if (consultasProximas.length === 0) {
+        return (
+            <div style={{ padding: '2rem', textAlign: 'center', color: '#666' }}>
+              <p>Não há consultas agendadas no momento.</p>
+            </div>
+        );
+      }
+
     return (
       <>
         {consultasProximas.map((consulta) => (
@@ -195,7 +167,13 @@ export default function Psicologo() {
                   <i className="icon-calendar"></i> {formatarDataHora(consulta.data_hora)}
                 </p>
                 <p className="info">
-                  50 min · {consulta.link_atendimento ? 'Online - PsicoAcolher' : 'Aguardando confirmação'}
+                  50 min · {
+                  consulta.status === 'pendente'
+                      ? '⏳ Aguardando confirmação do psicólogo'
+                      : consulta.link_atendimento
+                          ? '✅ Online - PsicoAcolher'
+                          : '⏳ Aguardando link do psicólogo'
+                }
                 </p>
               </div>
             </div>
@@ -233,7 +211,7 @@ export default function Psicologo() {
   function ModalAnotacoesConteudo({ consulta, onClose }) {
     return (
       <div className="modal-container">
-        <h2 className="title">Anotações de {consulta.nome}</h2>
+        <h2 className="title">Anotações de {consulta.paciente_nome}</h2>
 
         <p className="texto-explicativo">
           Use esta área para realizar anotações importantes sobre o paciente
@@ -242,7 +220,7 @@ export default function Psicologo() {
 
         <p className="data-select">
           <i className="icon-calendar"></i> Consulta realizada em{" "}
-          <strong>{consulta.data}</strong>
+          <strong>{formatarDataHora(consulta.data_hora)}</strong>
         </p>
 
         <label className="label">Anotações</label>
@@ -306,7 +284,7 @@ export default function Psicologo() {
         </p>
 
         <label className="label">
-          Link da reunião a ser enviada para o paciente
+          Link da consulta a ser enviada para o paciente (Google Meet, Teams ou Zoom)
         </label>
         <input
             type="url"
@@ -329,7 +307,7 @@ export default function Psicologo() {
   }
 
   function renderSolicitacoesConsultas() {
-    if (consultasSolicitacoes.length === 0) {
+    if (solicitacoesPendentes.length === 0) {
       return (
           <div style={{ padding: '2rem', textAlign: 'center', color: '#665' }}>
             <p>Não há solicitações pendentes no momento.</p>
@@ -339,7 +317,7 @@ export default function Psicologo() {
 
     return (
       <>
-        {consultasSolicitacoes.map((consulta) => (
+        {solicitacoesPendentes.map((consulta) => (
           <div key={consulta.id} className="consulta-card">
             <div className="profissional-info">
               <img
@@ -385,6 +363,14 @@ export default function Psicologo() {
   }
 
   function renderHistorico() {
+    if (consultasHistorico.length === 0) {
+      return (
+          <div style={{ padding: '2rem', textAlign: 'center', color: '#665' }}>
+            <p>Você ainda não tem consultas finalizadas.</p>
+          </div>
+      );
+    }
+
     return (
       <>
         {consultasHistorico.map((consulta) => (
@@ -397,18 +383,17 @@ export default function Psicologo() {
               />
               <div>
                 <h3>{consulta.paciente_nome}</h3>
-                <p className="especialidade">{consulta.especialidade}</p>
                 <p className="data">
                   <i className="icon-calendar"></i> {formatarDataHora(consulta.data_hora)}
                 </p>
                 <p className="info">
-                  50 min · {consulta.link_atendimento ? 'Online' : 'Presencial'}
+                  50 min · Online
                 </p>
                 <p
                   className="info"
                   style={{ marginTop: "6px", color: "#6c757d" }}
                 >
-                  ✔ Finalizada
+                  {consulta.status === 'cancelado' ? '❌ Cancelada' : '✔ Finalizada'}
                 </p>
               </div>
             </div>
@@ -449,7 +434,7 @@ export default function Psicologo() {
           <div className="container-perfil">
             <img
               className="img-perfil"
-              src="https://i.pinimg.com/736x/47/30/38/473038bf60343d88ccb4188c0df1c544.jpg"
+              src="https://i.pravatar.cc/300?img=5"
               alt=""
             />
             <img className="img-lapis" src={lapisIcon} alt="" />
@@ -507,17 +492,34 @@ export default function Psicologo() {
           <NavCategoria
             categorias={{
               "Próximas consultas": {
-                nome: <p style={{ margin: 0 }}>Próximas consultas</p>,
+                nome: (
+                  <p style={{ margin: 0 }}>
+                    Próximas consultas
+                    {consultasProximas.length > 0 && (
+                      <span className = "badge">{consultasProximas.length}</span>
+                  )}
+                  </p>
+                ),
                 conteudo: renderProximasConsultas,
               },
               "Solicitação de consultas": {
-                nome: <p style={{ margin: 0 }}>Solicitação de consultas</p>,
+                nome: (
+                    <p style={{ margin: 0 }}>
+                      Solicitação de consultas
+                      {solicitacoesPendentes.length > 0 && (
+                          <span className = "badge">{solicitacoesPendentes.length}</span>
+                      )}
+                    </p>
+                ),
                 conteudo: renderSolicitacoesConsultas,
               },
-              Histórico: {
+              "Histórico": {
                 nome: (
                   <p style={{ margin: 0 }}>
-                    Histórico <span className="badge">2</span>
+                    Histórico
+                    {consultasHistorico.length > 0 && (
+                      <span className="badge">{consultasHistorico.length}</span>
+                    )}
                   </p>
                 ),
                 conteudo: renderHistorico,
