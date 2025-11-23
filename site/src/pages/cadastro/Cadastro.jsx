@@ -1,6 +1,7 @@
 import React from "react";
 import "./Cadastro.scss";
-
+import { ToastContainer, toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 import { cadastroPsicologo } from "../../api/psicologoApi";
 import { cadastroPaciente } from "../../api/pacienteApi";
 import { useNavigate } from "react-router-dom";
@@ -58,32 +59,40 @@ export default function Cadastro() {
 
     try {
       if (formData.password !== formData.confirmPassword) {
-        alert("As senhas não coincidem!");
+        toast.error("As senhas não coincidem!");
         return;
       }
 
       if (isPsicologo) {
-        const r = await cadastroPsicologo(
+        await cadastroPsicologo(
           formData.name,
           formData.crp,
           formData.email,
           formData.password
         );
-        navigate("/login");
+
+        toast.success("Cadastro de psicólogo realizado com sucesso!");
+        setTimeout(() => navigate("/login"), 1500);
       } else {
-        const r = await cadastroPaciente(
+        await cadastroPaciente(
           formData.name,
           formData.cpf,
           formData.email,
           formData.password,
           formData.phone
         );
-        navigate("/login");
+
+        toast.success("Cadastro de paciente realizado com sucesso!");
+        setTimeout(() => navigate("/login"), 1500);
       }
     } catch (err) {
-      if (err.response?.status === 401) {
-        alert(err.response?.data.erro);
-      }
+      console.error(err);
+
+      const mensagemErro =
+        err.response?.data?.erro ||
+        "Não foi possível realizar o cadastro. Tente novamente.";
+
+      toast.error(mensagemErro);
     }
   }
 
@@ -111,6 +120,8 @@ export default function Cadastro() {
 
   return (
     <div className="register-page">
+      <ToastContainer position="top-right" autoClose={2500} />
+
       <div className="animated-card">
         <div className="text-center mb-4">
           <h3 className="animated-text">Crie sua conta</h3>

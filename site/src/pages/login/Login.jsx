@@ -4,6 +4,8 @@ import Storage from "local-storage";
 import { useNavigate } from "react-router-dom";
 import { useState, useEffect } from "react";
 import { loginUsuario } from "../../api/usuarioApi";
+import { ToastContainer, toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 
 export default function Login() {
   const navigate = useNavigate();
@@ -55,11 +57,11 @@ export default function Login() {
       }
     } catch (err) {
       if (err.response?.status === 401) {
-        alert("Email ou senha inválidos");
+        toast.error("Email ou senha inválidos");
       } else if (err.response?.status === 404) {
-        alert("Usuário não encontrado");
+        toast.error("Usuário não encontrado");
       } else {
-        alert("Erro ao fazer login.");
+        toast.error("Erro ao fazer login.");
       }
     }
   }
@@ -73,6 +75,8 @@ export default function Login() {
 
   return (
     <div className="login-page d-flex align-items-center justify-content-center min-vh-100">
+      <ToastContainer />
+
       <div className="card animated-card p-4">
         <div className="text-center mb-4">
           <h3 className="fw-bold animated-text">Login</h3>

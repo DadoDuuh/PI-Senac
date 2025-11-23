@@ -13,6 +13,7 @@ export default function Main(props) {
   );
   const isUserPage = location.pathname.startsWith("/busca");
   const isPacientePage = location.pathname.startsWith("/conta/paciente");
+  const isChatPage = location.pathname.startsWith("/chat");
 
   useEffect(() => {
     const handleScroll = () => {
@@ -57,6 +58,11 @@ export default function Main(props) {
   const irParaPaginaPacienteBuscaPsicologos = (e) => {
     e.preventDefault();
     navigate("/busca");
+  };
+
+  const voltarPagina = (e) => {
+    e.preventDefault();
+    navigate(-1);
   };
 
   const toggleMobileMenu = () => {
@@ -142,6 +148,15 @@ export default function Main(props) {
                 className="btn btn-outline-primary btn-login"
               >
                 Agendar Consulta
+              </div>
+            )}
+
+            {isChatPage && (
+              <div
+                onClick={voltarPagina}
+                className="btn btn-outline-primary btn-login"
+              >
+                Voltar
               </div>
             )}
 
