@@ -12,6 +12,7 @@ export default function Paciente() {
       duracao: "50 min",
       tipo: "Online - PsicoAcolher",
       foto: "https://images.unsplash.com/photo-1559839734-2b71ea197ec2",
+      meetLink: "https://meet.google.com/abc-defg-hij",
       acoes: ["Cancelar", "Reagendar", "Iniciar consulta", "Acessar chat"],
     },
     {
@@ -22,6 +23,7 @@ export default function Paciente() {
       duracao: "50 min",
       tipo: "Presencial - Rua das Flores, 195",
       foto: "https://images.unsplash.com/photo-1612349317150-e413f6a5b16d",
+      meetLink: "https://meet.google.com/abc-defg-hij",
       acoes: ["Cancelar", "Reagendar", "Acessar chat"],
     },
   ];
@@ -73,12 +75,19 @@ export default function Paciente() {
                 </p>
               </div>
             </div>
-
             <div className="acoes">
               {consulta.acoes.map((acao, index) => (
                 <button
                   key={index}
                   className={`btn-${acao.toLowerCase().replace(" ", "-")}`}
+                  onClick={() => {
+                    if (
+                      acao === "Iniciar consulta" ||
+                      acao === "Acessar sala"
+                    ) {
+                      window.open(consulta.meetLink, "_blank");
+                    }
+                  }}
                 >
                   {acao}
                 </button>

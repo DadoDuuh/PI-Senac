@@ -13,8 +13,12 @@ export default function Main(props) {
     "/cadastro",
     "/busca",
     "/agendamentos",
+    "/conta/paciente",
+    "/conta/psicologo",
+    "/chat",
   ].some((route) => location.pathname.startsWith(route));
   const isUserPage = location.pathname.startsWith("/busca");
+  const isChatPage = location.pathname.startsWith("/chat");
   const isAgendamentosPage = location.pathname.startsWith("/agendamentos");
 
   useEffect(() => {
@@ -57,7 +61,7 @@ export default function Main(props) {
     navigate("/agendamentos");
   };
 
-    const irParaPaginaPacienteBuscaPsicologos = (e) => {
+  const irParaPaginaPacienteBuscaPsicologos = (e) => {
     e.preventDefault();
     navigate("/busca");
   };
