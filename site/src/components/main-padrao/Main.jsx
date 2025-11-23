@@ -8,17 +8,11 @@ export default function Main(props) {
   const [scrolled, setScrolled] = useState(false);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
-  const isAuthRoute = [
-    "/login",
-    "/cadastro",
-    "/busca",
-    "/agendamentos",
-    "/conta",
-    "/chat",
-  ].some((route) => location.pathname.startsWith(route));
+  const isAuthRoute = ["/login", "/cadastro", "/busca", "/conta", "/chat"].some(
+    (route) => location.pathname.startsWith(route)
+  );
   const isUserPage = location.pathname.startsWith("/busca");
-  const isChatPage = location.pathname.startsWith("/chat");
-  const isAgendamentosPage = location.pathname.startsWith("/agendamentos");
+  const isPacientePage = location.pathname.startsWith("/conta/paciente");
 
   useEffect(() => {
     const handleScroll = () => {
