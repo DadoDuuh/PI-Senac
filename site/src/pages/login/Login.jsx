@@ -13,26 +13,6 @@ export default function Login() {
   const [email, setEmail] = useState("");
   const [senha, setSenha] = useState("");
 
-  const [cpf, setCpf] = useState("");
-  const [celular, setCelular] = useState("");
-
-  function maskCPF(value) {
-    return value
-      .replace(/\D/g, "")
-      .replace(/(\d{3})(\d)/, "$1.$2")
-      .replace(/(\d{3})(\d)/, "$1.$2")
-      .replace(/(\d{3})(\d{1,2})$/, "$1-$2")
-      .substring(0, 14);
-  }
-
-  function maskCelular(value) {
-    return value
-      .replace(/\D/g, "")
-      .replace(/(\d{2})(\d)/, "($1) $2")
-      .replace(/(\d{5})(\d)/, "$1-$2")
-      .substring(0, 15);
-  }
-
   const irParaCadastro = (e) => {
     e.preventDefault();
     navigate("/cadastro");
@@ -76,7 +56,6 @@ export default function Login() {
   return (
     <div className="login-page d-flex align-items-center justify-content-center min-vh-100">
       <ToastContainer />
-
       <div className="card animated-card p-4">
         <div className="text-center mb-4">
           <h3 className="fw-bold animated-text">Login</h3>
@@ -86,30 +65,6 @@ export default function Login() {
         </div>
 
         <form>
-          <div className="mb-3 form-group">
-            <label className="form-label fw-semibold">CPF</label>
-            <input
-              type="text"
-              value={cpf}
-              onChange={(e) => setCpf(maskCPF(e.target.value))}
-              className="form-control input-field"
-              placeholder="000.000.000-00"
-              maxLength={14}
-            />
-          </div>
-
-          <div className="mb-3 form-group">
-            <label className="form-label fw-semibold">Celular</label>
-            <input
-              type="text"
-              value={celular}
-              onChange={(e) => setCelular(maskCelular(e.target.value))}
-              className="form-control input-field"
-              placeholder="(00) 00000-0000"
-              maxLength={15}
-            />
-          </div>
-
           <div className="mb-3 form-group">
             <label htmlFor="email" className="form-label fw-semibold">
               E-mail
