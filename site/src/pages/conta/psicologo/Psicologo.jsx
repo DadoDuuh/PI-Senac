@@ -1,15 +1,22 @@
 import "./Psicologo.scss";
 import lapisIcon from "../../../assets/images/lapis-icon.svg";
 import NavCategoria from "../../../components/nav-categoria";
-import { useEffect, useState } from "react";
+import React, { useEffect, useState } from "react";
 import ModalPadrao from "../../../components/modal-padrao";
 import { buscarPerfilPsicologo } from "../../../api/psicologoApi";
 import { useNavigate } from "react-router-dom";
-import { buscarConsultasPsicologo, cancelarConsulta, confirmarConsulta } from "../../../api/consultaApi";
+import {
+  buscarConsultasPsicologo,
+  cancelarConsulta,
+  confirmarConsulta,
+} from "../../../api/consultaApi";
+import { ToastContainer, toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 
 export default function Psicologo() {
   const navigate = useNavigate();
   const [psicologo, setPsicologo] = useState(null);
+  const [pacientes, setPacientes] = useState(null);
   const [consultas, setConsultas] = useState([]);
   const [loading, setLoading] = useState(true);
   const [modalOpen, setModalOpen] = useState(false);
@@ -19,11 +26,11 @@ export default function Psicologo() {
 
   // Busca dados do psicólogo ao carregar a página
   useEffect(() => {
-    async function carregarDados() {
+    async function carregarPerfil() {
       try {
-        const usuarioId = localStorage.getItem('usuarioId');
+        const usuarioId = localStorage.getItem("usuarioId");
         if (!usuarioId) {
-          navigate('/login');
+          navigate("/login");
           return;
         }
         // Busca perfil do psicólogo
@@ -32,7 +39,8 @@ export default function Psicologo() {
 
         // Busca consultas do psicólogo
         const dadosConsultas = await buscarConsultasPsicologo(usuarioId);
-        setConsultas(dadosConsultas)
+        console.log("Consultas do psicólogo:", dadosConsultas);
+        console.log("Quantidade de consultas:", dadosConsultas.length);
 
         // Log de cada consulta
         dadosConsultas.forEach((c, i) => {
@@ -41,18 +49,18 @@ export default function Psicologo() {
             paciente: c.paciente_nome,
             data: c.data_hora,
             status: c.status,
-            link: c.link_atendimento
+            link: c.link_atendimento,
           });
         });
 
+        setConsultas(dadosConsultas);
       } catch (error) {
-        console.error("Erro ao carregar pacientes:", error);
-        alert("Erro ao carregar seus dados");
+        toast.error("Erro ao carregar seus dados");
       } finally {
         setLoading(false);
       }
     }
-    carregarDados();
+    carregarPerfil();
   }, [navigate]);
 
   function abrirModalConfirmar(consulta) {
@@ -97,34 +105,34 @@ export default function Psicologo() {
 
     try {
       await cancelarConsulta(agendamentoId);
-      alert("Consulta cancelada com sucesso!");
+      toast.success("Consulta cancelada com sucesso!");
 
       // Recarrega as consultas
-      const usuarioId = localStorage.getItem('usuarioId');
+      const usuarioId = localStorage.getItem("usuarioId");
       const dadosConsultas = await buscarConsultasPsicologo(usuarioId);
       setConsultas(dadosConsultas);
     } catch (error) {
       console.error("Erro ao cancelar:", error);
-      alert("Erro ao cancelar consulta");
+      toast.error("Erro ao cancelar consulta");
     }
   };
 
   const handleIniciarConsulta = (linkAtendimento) => {
     if (linkAtendimento) {
-      window.open(linkAtendimento, '_blank');
+      window.open(linkAtendimento, "_blank");
     } else {
-      alert("Link ainda não disponível");
+      toast.warning("Consulta ainda não foi confirmada");
     }
   };
 
   const formatarDataHora = (dataHora) => {
     const data = new Date(dataHora);
-    return data.toLocaleString('pt-BR', {
-      day: '2-digit',
-      month: '2-digit',
-      year: 'numeric',
-      hour: '2-digit',
-      minute: '2-digit'
+    return data.toLocaleString("pt-BR", {
+      day: "2-digit",
+      month: "2-digit",
+      year: "numeric",
+      hour: "2-digit",
+      minute: "2-digit",
     });
   };
 
@@ -157,47 +165,47 @@ export default function Psicologo() {
           <div key={consulta.id} className="consulta-card">
             <div className="profissional-info">
               <img
-                  src={`https://i.pravatar.cc/150?img=${consulta.paciente_id}`}
-                  alt={consulta.paciente_nome}
-                  className="foto-profissional"
+                src={`https://i.pravatar.cc/150?img=${consulta.paciente_id}`}
+                alt={consulta.paciente_nome}
+                className="foto-profissional"
               />
               <div>
                 <h3>{consulta.paciente_nome}</h3>
                 <p className="data">
-                  <i className="icon-calendar"></i> {formatarDataHora(consulta.data_hora)}
+                  <i className="icon-calendar"></i>{" "}
+                  {formatarDataHora(consulta.data_hora)}
                 </p>
                 <p className="info">
-                  50 min · {
-                  consulta.status === 'pendente'
-                      ? '⏳ Aguardando confirmação do psicólogo'
-                      : consulta.link_atendimento
-                          ? '✅ Online - PsicoAcolher'
-                          : '⏳ Aguardando link do psicólogo'
-                }
+                  50 min ·{" "}
+                  {consulta.link_atendimento
+                    ? "Online - PsicoAcolher"
+                    : "Aguardando confirmação"}
                 </p>
               </div>
             </div>
 
             <div className="acoes">
               <button
-                  className="btn-cancelar"
-                  onClick={() => handleCancelar(consulta.id)}
+                className="btn-cancelar"
+                onClick={() => handleCancelar(consulta.id)}
               >
                 Cancelar
               </button>
 
               {consulta.link_atendimento && (
-                  <button
-                      className="btn-iniciar-consulta"
-                      onClick={() => handleIniciarConsulta(consulta.link_atendimento)}
-                  >
-                    Iniciar consulta
-                  </button>
+                <button
+                  className="btn-iniciar-consulta"
+                  onClick={() =>
+                    handleIniciarConsulta(consulta.link_atendimento)
+                  }
+                >
+                  Iniciar consulta
+                </button>
               )}
 
               <button
-                  className="btn-acessar-chat"
-                  onClick={() => navigate('/chat')}
+                className="btn-acessar-chat"
+                onClick={() => navigate("/chat")}
               >
                 Acessar chat
               </button>
@@ -241,27 +249,27 @@ export default function Psicologo() {
   }
 
   function ModalConfirmarConteudo({ consulta, onClose }) {
-    const [linkAtendimento, setLinkAtendimento] = useState('');
+    const [linkAtendimento, setLinkAtendimento] = useState("");
 
     const handleConfirmar = async () => {
       try {
         if (!linkAtendimento.trim()) {
-          alert("Por favor, insira o link da reunião");
+          toast.warning("Por favor, insira o link da reunião");
           return;
         }
 
         await confirmarConsulta(consulta.id, linkAtendimento);
-        alert("Consulta confirmada com sucesso!");
+        toast.success("Consulta confirmada com sucesso!");
 
         // Recarrega consultas
-        const usuarioId = localStorage.getItem('usuarioId');
+        const usuarioId = localStorage.getItem("usuarioId");
         const dadosConsultas = await buscarConsultasPsicologo(usuarioId);
         setConsultas(dadosConsultas);
 
         onClose();
       } catch (error) {
         console.error("Erro ao confirmar:", error);
-        alert("Erro ao confirmar consulta");
+        toast.error("Erro ao confirmar consulta");
       }
     };
 
@@ -287,11 +295,11 @@ export default function Psicologo() {
           Link da consulta a ser enviada para o paciente (Google Meet, Teams ou Zoom)
         </label>
         <input
-            type="url"
-            className="input"
-            placeholder="https://meet.google.com/..."
-            value={linkAtendimento}
-            onChange={(e) => setLinkAtendimento(e.target.value)}
+          type="url"
+          className="input"
+          placeholder="https://meet.google.com/..."
+          value={linkAtendimento}
+          onChange={(e) => setLinkAtendimento(e.target.value)}
         />
 
         <div className="buttons-row">
@@ -300,7 +308,8 @@ export default function Psicologo() {
           </button>
 
           <button className="btn-confirmar" onClick={handleConfirmar}>
-            Confirmar e Enviar</button>
+            Confirmar e Enviar
+          </button>
         </div>
       </div>
     );
@@ -309,9 +318,9 @@ export default function Psicologo() {
   function renderSolicitacoesConsultas() {
     if (solicitacoesPendentes.length === 0) {
       return (
-          <div style={{ padding: '2rem', textAlign: 'center', color: '#665' }}>
-            <p>Não há solicitações pendentes no momento.</p>
-          </div>
+        <div style={{ padding: "2rem", textAlign: "center", color: "#665" }}>
+          <p>Não há solicitações pendentes no momento.</p>
+        </div>
       );
     }
 
@@ -321,14 +330,15 @@ export default function Psicologo() {
           <div key={consulta.id} className="consulta-card">
             <div className="profissional-info">
               <img
-                  src={ `https://i.pravatar.cc/150?img=${consulta.paciente_id}` }
-                  alt="{consulta.paciente_nome}"
-                  className="foto-profissional"
+                src={`https://i.pravatar.cc/150?img=${consulta.paciente_id}`}
+                alt="{consulta.paciente_nome}"
+                className="foto-profissional"
               />
               <div>
                 <h3>{consulta.paciente_nome}</h3>
                 <p className="data">
-                  <i className="icon-calendar" /> {formatarDataHora(consulta.data_hora)}
+                  <i className="icon-calendar" />{" "}
+                  {formatarDataHora(consulta.data_hora)}
                 </p>
                 <p className="info">50 min · Aguardando confirmação</p>
               </div>
@@ -350,8 +360,8 @@ export default function Psicologo() {
               </button>
 
               <button
-                  className="btn-cancelar"
-                  onClick={() => handleCancelar(consulta.id)}
+                className="btn-cancelar"
+                onClick={() => handleCancelar(consulta.id)}
               >
                 Recusar
               </button>
@@ -377,14 +387,15 @@ export default function Psicologo() {
           <div key={consulta.id} className="consulta-card">
             <div className="profissional-info">
               <img
-                  src={`https://i.pravatar.cc/150?img=${consulta.paciente_id}`}
-                  alt={consulta.paciente_nome}
-                  className="foto-profissional"
+                src={`https://i.pravatar.cc/150?img=${consulta.paciente_id}`}
+                alt={consulta.paciente_nome}
+                className="foto-profissional"
               />
               <div>
                 <h3>{consulta.paciente_nome}</h3>
                 <p className="data">
-                  <i className="icon-calendar"></i> {formatarDataHora(consulta.data_hora)}
+                  <i className="icon-calendar"></i>{" "}
+                  {formatarDataHora(consulta.data_hora)}
                 </p>
                 <p className="info">
                   50 min · Online
@@ -407,9 +418,11 @@ export default function Psicologo() {
               </button>
 
               <button
-                  className="btn-ver-detalhes"
-                  onClick={() => navigate('/chat')}
-              >Acessar chat</button>
+                className="btn-ver-detalhes"
+                onClick={() => navigate("/chat")}
+              >
+                Acessar chat
+              </button>
             </div>
           </div>
         ))}
@@ -419,16 +432,17 @@ export default function Psicologo() {
 
   if (loading) {
     return (
-        <div className="conta-page">
-          <div style={{ padding: '2rem', textAlign: 'center' }}>
-            <p>Carregando...</p>
-          </div>
+      <div className="conta-page">
+        <div style={{ padding: "2rem", textAlign: "center" }}>
+          <p>Carregando...</p>
         </div>
+      </div>
     );
   }
 
   return (
     <div className="conta-page">
+      <ToastContainer position="top-right" autoClose={2500} />
       <header className="conta-header">
         <div className="container-contas">
           <div className="container-perfil">

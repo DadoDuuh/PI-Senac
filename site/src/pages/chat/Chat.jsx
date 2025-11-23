@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import "./Chat.scss";
 import balaoChat from "../../assets/images/balao-chat-icon.svg";
 import denunciaIcon from "../../assets/images/denuncia-icon.svg";
+import ModalDenuncia from "../../components/modal-denuncia";
 
 export default function ChatScreen() {
   const [messages, setMessages] = useState([
@@ -28,6 +29,7 @@ export default function ChatScreen() {
   ]);
 
   const [input, setInput] = useState("");
+  const [showModal, setShowModal] = useState(false);
 
   const sendMessage = () => {
     if (!input.trim()) return;
@@ -40,6 +42,8 @@ export default function ChatScreen() {
 
   return (
     <div className="page-chat">
+      {showModal && <ModalDenuncia close={() => setShowModal(false)} />}
+
       <header className="appointments-header">
         <div className="container">
           <img src={balaoChat} alt="" />
@@ -64,7 +68,8 @@ export default function ChatScreen() {
         <main className="chat-main">
           <header className="chat-header">
             <div className="chat-user">Dr. Carlos Mendes</div>
-            <button className="report-btn">
+
+            <button className="report-btn" onClick={() => setShowModal(true)}>
               <span>Denunciar</span>
               <img src={denunciaIcon} alt="" />
             </button>

@@ -1,14 +1,16 @@
 import React from "react";
 import "./Cadastro.scss";
-
-import { cadastroPsicologo } from '../../api/psicologoApi';
-import { cadastroPaciente } from '../../api/pacienteApi';
+import { ToastContainer, toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
+import { cadastroPsicologo } from "../../api/psicologoApi";
+import { cadastroPaciente } from "../../api/pacienteApi";
 import { useNavigate } from "react-router-dom";
 import { useState } from "react";
 
 export default function Cadastro() {
   const navigate = useNavigate();
   const [isPsicologo, setIsPsicologo] = useState(false);
+
   const [formData, setFormData] = useState({
     name: "",
     email: "",
@@ -19,67 +21,107 @@ export default function Cadastro() {
     cpf: "",
     crp: "",
   });
-  
 
-  async function cadastroClick() {
-    console.log(formData)
+  function maskCPF(value) {
+    return value
+      .replace(/\D/g, "")
+      .replace(/(\d{3})(\d)/, "$1.$2")
+      .replace(/(\d{3})(\d)/, "$1.$2")
+      .replace(/(\d{3})(\d{1,2})$/, "$1-$2")
+      .substring(0, 14);
+  }
+
+  function maskPhone(value) {
+    return value
+      .replace(/\D/g, "")
+      .replace(/(\d{2})(\d)/, "($1) $2")
+      .replace(/(\d{5})(\d)/, "$1-$2")
+      .substring(0, 15);
+  }
+
+  const handleChange = (e) => {
+    const { name, value } = e.target;
+
+    let maskedValue = value;
+
+    if (name === "cpf") maskedValue = maskCPF(value);
+    if (name === "phone") maskedValue = maskPhone(value);
+
+    setFormData((prev) => ({
+      ...prev,
+      [name]: maskedValue,
+    }));
+  };
+
+  async function cadastroClick(e) {
+    e.preventDefault();
+    console.log(formData);
+
     try {
-      if(formData.password !== formData.confirmPassword) {
-        alert("As senhas não coincidem!");
+      if (formData.password !== formData.confirmPassword) {
+        toast.error("As senhas não coincidem!");
+        return;
       }
 
-      if(isPsicologo) {
-        const r = await cadastroPsicologo(formData.name, formData.crp, formData.email, formData.password);
-        //Storage('psicologo-logado', r);
-        navigate('/login');
+      if (isPsicologo) {
+        await cadastroPsicologo(
+          formData.name,
+          formData.crp,
+          formData.email,
+          formData.password
+        );
+
+        toast.success("Cadastro de psicólogo realizado com sucesso!");
+        setTimeout(() => navigate("/login"), 1500);
+      } else {
+        await cadastroPaciente(
+          formData.name,
+          formData.cpf,
+          formData.email,
+          formData.password,
+          formData.phone
+        );
+
+        toast.success("Cadastro de paciente realizado com sucesso!");
+        setTimeout(() => navigate("/login"), 1500);
       }
-      else {
-        console.log("🟢 Iniciando cadastro...");
-        const r = await cadastroPaciente(formData.name, formData.cpf, formData.email, formData.password, formData.phone);
-        console.log("✅ Cadastro concluído:", r);
-        //Storage('usuario-logado', r);
-        navigate('/login');
-      }
-    }
-    catch (err) {
-        if (err.response?.status === 401) {
-          alert(err.response?.data.erro);
-      }
+    } catch (err) {
+      console.error(err);
+
+      const mensagemErro =
+        err.response?.data?.erro ||
+        "Não foi possível realizar o cadastro. Tente novamente.";
+
+      toast.error(mensagemErro);
     }
   }
 
-  document.addEventListener("keypress", function  (e) {
-    if(e.key === "Enter"){
-        const btn = document.querySelector("#send");
-        btn.click();
+  document.addEventListener("keypress", function (e) {
+    if (e.key === "Enter") {
+      const btn = document.querySelector("#send");
+      btn?.click();
     }
-  })
+  });
 
   const irParaLogin = (e) => {
     e.preventDefault();
     navigate("/login");
   };
 
-  const handleChange = (e) => {
-    const { name, value } = e.target;
-    setFormData((prev) => ({
-      ...prev,
-      [name]: value,
-    }));
-  };
-
   const toggleUserType = () => {
     setIsPsicologo(!isPsicologo);
-    // Limpa o campo que não será mais usado
-    setFormData((prev) => ({ 
-      ...prev, 
+
+    setFormData((prev) => ({
+      ...prev,
       crp: isPsicologo ? "" : prev.crp,
-      cpf: !isPsicologo ? "" : prev.cpf 
+      cpf: !isPsicologo ? "" : prev.cpf,
     }));
   };
 
   return (
     <div className="register-page">
+      <ToastContainer position="top-right" autoClose={2500} />
+
       <div className="animated-card">
         <div className="text-center mb-4">
           <h3 className="animated-text">Crie sua conta</h3>
@@ -90,7 +132,7 @@ export default function Cadastro() {
           </p>
         </div>
 
-        <form onSubmit={irParaLogin}>
+        <form>
           <div className="form-group">
             <label htmlFor="name" className="form-label">
               Nome Completo
@@ -126,13 +168,10 @@ export default function Cadastro() {
           <div className="row">
             <div className="col-md-6">
               <div className="form-group">
-                <label htmlFor="password" className="form-label">
-                  Senha
-                </label>
+                <label className="form-label">Senha</label>
                 <input
                   type="password"
                   className="form-control input-field"
-                  id="password"
                   name="password"
                   placeholder="Crie uma senha"
                   value={formData.password}
@@ -141,15 +180,13 @@ export default function Cadastro() {
                 />
               </div>
             </div>
+
             <div className="col-md-6">
               <div className="form-group">
-                <label htmlFor="confirmPassword" className="form-label">
-                  Confirmar Senha
-                </label>
+                <label className="form-label">Confirmar Senha</label>
                 <input
                   type="password"
                   className="form-control input-field"
-                  id="confirmPassword"
                   name="confirmPassword"
                   placeholder="Confirme sua senha"
                   value={formData.confirmPassword}
@@ -163,13 +200,10 @@ export default function Cadastro() {
           <div className="row">
             <div className="col-md-6">
               <div className="form-group">
-                <label htmlFor="phone" className="form-label">
-                  Telefone
-                </label>
+                <label className="form-label">Telefone</label>
                 <input
                   type="tel"
                   className="form-control input-field"
-                  id="phone"
                   name="phone"
                   placeholder="(00) 00000-0000"
                   value={formData.phone}
@@ -178,38 +212,36 @@ export default function Cadastro() {
                 />
               </div>
             </div>
+
             <div className="col-md-6">
               {!isPsicologo && (
                 <div className="form-group">
-                  <label htmlFor="cpf" className="form-label">
-                    CPF
-                  </label>
+                  <label className="form-label">CPF</label>
                   <input
                     type="text"
                     className="form-control input-field"
-                    id="cpf"
                     name="cpf"
                     placeholder="000.000.000-00"
                     value={formData.cpf}
                     onChange={handleChange}
-                    required={!isPsicologo}
+                    required
                   />
                 </div>
               )}
+
               {isPsicologo && (
                 <div className="form-group">
-                  <label htmlFor="crp" className="form-label">
+                  <label className="form-label">
                     CRP (Registro Profissional)
                   </label>
                   <input
                     type="text"
                     className="form-control input-field"
-                    id="crp"
                     name="crp"
                     placeholder="Seu número de registro no CRP"
                     value={formData.crp}
                     onChange={handleChange}
-                    required={isPsicologo}
+                    required
                   />
                   <small className="text-muted">Formato: XX/XXXXXX</small>
                 </div>
@@ -238,6 +270,7 @@ export default function Cadastro() {
 
           <button
             onClick={cadastroClick}
+            id="send"
             type="submit"
             className="btn btn-primary w-100 animated-button"
           >

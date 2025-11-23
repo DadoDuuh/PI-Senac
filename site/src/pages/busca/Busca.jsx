@@ -3,7 +3,10 @@ import { useNavigate } from "react-router-dom";
 import { buscarPerfilPaciente } from "../../api/pacienteApi";
 import { agendarConsulta } from "../../api/consultaApi";
 import "./Busca.scss";
-import {psicologosDisponiveis} from "../../api/psicologoApi";
+import { psicologosDisponiveis } from "../../api/psicologoApi";
+
+import { ToastContainer, toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 
 export default function Busca() {
   const navigate = useNavigate();
@@ -21,15 +24,15 @@ export default function Busca() {
   useEffect(() => {
     async function carregarPerfil() {
       try {
-        const usuarioId = localStorage.getItem('usuarioId');
+        const usuarioId = localStorage.getItem("usuarioId");
         if (!usuarioId) {
-          navigate('/login');
+          navigate("/login");
           return;
         }
         const dados = await buscarPerfilPaciente(usuarioId);
         setPaciente(dados);
       } catch (error) {
-        alert("Erro ao carregar seus dados");
+        toast.error("Erro ao carregar seus dados");
       } finally {
         setLoading(false);
       }
@@ -44,22 +47,28 @@ export default function Busca() {
         console.log("🔍 Psicólogos do banco:", dadosPsicologos);
 
         // Mocks:
-        const abordagens = ['Sistêmica', 'TCC', 'Humanista', 'Cognitivo-Comportamental', 'Psicanálise'];
+        const abordagens = [
+          "Sistêmica",
+          "TCC",
+          "Humanista",
+          "Cognitivo-Comportamental",
+          "Psicanálise",
+        ];
         const gerarConsistente = (id, max) => {
           return (id * 7 + 13) % max;
         };
 
-        const psicologosFormatados = dadosPsicologos.map(psi => ({
+        const psicologosFormatados = dadosPsicologos.map((psi) => ({
           id: psi.id,
           name: psi.nome,
           specialty: psi.especialidade,
           approach: abordagens[gerarConsistente(psi.id, abordagens.length)],
           experience: `${gerarConsistente(psi.id, 30) + 1} anos`,
           image: `https://i.pravatar.cc/300?img=${psi.id}`,
-          rating: (4.5 + (gerarConsistente(psi.id, 10) / 20)).toFixed(1),
+          rating: (4.5 + gerarConsistente(psi.id, 10) / 20).toFixed(1),
           availableSlots: ["Seg 14:00", "Qua 10:00", "Sex 16:00"],
           price: "Gratuito",
-          verified: true
+          verified: true,
         }));
         console.log("✅ Psicólogos formatados:", psicologosFormatados);
         setPsicologos(psicologosFormatados);
@@ -76,19 +85,22 @@ export default function Busca() {
     { value: "Ansiedade e Depressão", label: "Ansiedade e Depressão" },
     { value: "TCC", label: "TCC" },
     { value: "Infantil", label: "Infantil" },
-    { value: "Casais e Família", label: "Casais e Família" }
+    { value: "Casais e Família", label: "Casais e Família" },
   ];
 
-  const filteredpsicologos = psicologos.filter(psychologist => {
-    const matchesSearch = psychologist.name.toLowerCase().includes(searchTerm.toLowerCase()) || 
-                         psychologist.specialty.toLowerCase().includes(searchTerm.toLowerCase());
-    const matchesSpecialty = selectedSpecialty === "all" || psychologist.specialty === selectedSpecialty;
+  const filteredpsicologos = psicologos.filter((psychologist) => {
+    const matchesSearch =
+      psychologist.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      psychologist.specialty.toLowerCase().includes(searchTerm.toLowerCase());
+    const matchesSpecialty =
+      selectedSpecialty === "all" ||
+      psychologist.specialty === selectedSpecialty;
     return matchesSearch && matchesSpecialty;
   });
 
   // Abre modal de agendamento
   const handleSchedule = (psychologist) => {
-    setPsicologoSelecionado(psychologist)
+    setPsicologoSelecionado(psychologist);
     setModalOpen(true);
   };
 
@@ -96,57 +108,66 @@ export default function Busca() {
   const confirmarAgendamento = async () => {
     try {
       if (!dataHoraSelecionada) {
-        alert("Por favor, selecione uma data e horário");
+        toast.error("Por favor, selecione uma data e horário");
         return;
       }
-      const usuarioId = localStorage.getItem('usuarioId');
+      const usuarioId = localStorage.getItem("usuarioId");
 
-      await agendarConsulta(usuarioId, psicologoSelecionado.id, dataHoraSelecionada);
+      await agendarConsulta(
+        usuarioId,
+        psicologoSelecionado.id,
+        dataHoraSelecionada
+      );
 
-      alert("Consulta agendada com sucesso! Aguarde a confirmação do psicólogo.");
+      toast.success(
+        "Consulta agendada com sucesso! Aguarde a confirmação do psicólogo."
+      );
+
       setModalOpen(false);
       setPsicologoSelecionado(null);
       setDataHoraSelecionada("");
 
-      navigate('/conta/paciente');
-
+      navigate("/conta/paciente");
     } catch (error) {
       console.error("Erro ao agendar:", error);
-      alert("Erro ao agendar consulta. Tente novamente.");
+      toast.error("Erro ao agendar consulta. Tente novamente.");
     }
   };
 
   if (loading) {
     return (
-        <div className="patient-home">
-          <div className="loading-container">
-            <p>Carregando...</p>
-          </div>
+      <div className="patient-home">
+        <div className="loading-container">
+          <p>Carregando...</p>
         </div>
+      </div>
     );
   }
 
   return (
     <div className="patient-home">
+      <ToastContainer position="top-right" autoClose={2500} />
+
       <header className="patient-header">
         <div className="container">
-          {paciente && (
-                <h2>Olá, {paciente.nome}!</h2>
-          )}
+          {paciente && <h2>Olá, {paciente.nome}!</h2>}
           <h1>Encontre seu Psicólogo</h1>
-          <p className="subtitle">Agende sua consulta com um de nossos profissionais voluntários</p>
-          
+          <p className="subtitle">
+            Agende sua consulta com um de nossos profissionais voluntários
+          </p>
+
           <div className="search-filter-container">
             <div className="search-bar">
               <i className="fas fa-search"></i>
               <input
-                type="text" readOnly
+                type="text"
+                readOnly
                 placeholder="Buscar por nome ou especialidade..."
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
               />
             </div>
-            
+
             <div className="filter-dropdown">
               <select
                 value={selectedSpecialty}
@@ -171,10 +192,10 @@ export default function Busca() {
               {filteredpsicologos.map((psychologist) => (
                 <div key={psychologist.id} className="psychologist-card">
                   <div className="psychologist-header">
-                    <img 
-                      src={psychologist.image} 
-                      alt={psychologist.name} 
-                      className="psychologist-image" 
+                    <img
+                      src={psychologist.image}
+                      alt={psychologist.name}
+                      className="psychologist-image"
                     />
                     <div className="psychologist-info">
                       <h3>{psychologist.name}</h3>
@@ -189,7 +210,7 @@ export default function Busca() {
                       </div>
                     </div>
                   </div>
-                  
+
                   <div className="psychologist-details">
                     <div className="detail-item">
                       <i className="fas fa-briefcase-medical"></i>
@@ -204,7 +225,7 @@ export default function Busca() {
                       <span>{psychologist.experience} de experiência</span>
                     </div>
                   </div>
-                  
+
                   <div className="availability">
                     <h4>Horários Disponíveis:</h4>
                     <div className="slots-container">
@@ -215,10 +236,10 @@ export default function Busca() {
                       ))}
                     </div>
                   </div>
-                  
+
                   <div className="psychologist-footer">
                     <span className="price">{psychologist.price}</span>
-                    <button 
+                    <button
                       className="btn-schedule"
                       onClick={() => handleSchedule(psychologist)}
                     >
@@ -239,28 +260,27 @@ export default function Busca() {
       </main>
 
       {modalOpen && psicologoSelecionado && (
-          <div className="modal-overlay" onClick={() => setModalOpen(false)}>
-            <div className="modal-content" onClick={(e) => e.stopPropagation()}>
-              <h2>Agendar Consulta</h2>
-              <h3>{psicologoSelecionado.name}</h3>
-              <p>{psicologoSelecionado.specialty}</p>
+        <div className="modal-overlay" onClick={() => setModalOpen(false)}>
+          <div className="modal-content" onClick={(e) => e.stopPropagation()}>
+            <h2>Agendar Consulta</h2>
+            <h3>{psicologoSelecionado.name}</h3>
+            <p>{psicologoSelecionado.specialty}</p>
 
-              <label>Selecione data e horário:</label>
-              <input
-                  type="datetime-local"
-                  value={dataHoraSelecionada}
-                  onChange={(e) => setDataHoraSelecionada(e.target.value)}
-                  min={new Date().toISOString().slice(0, 16)}
-              />
+            <label>Selecione data e horário:</label>
+            <input
+              type="datetime-local"
+              value={dataHoraSelecionada}
+              onChange={(e) => setDataHoraSelecionada(e.target.value)}
+              min={new Date().toISOString().slice(0, 16)}
+            />
 
-              <div className="modal-actions">
-                <button onClick={() => setModalOpen(false)}>Cancelar</button>
-                <button onClick={confirmarAgendamento}>Confirmar</button>
-              </div>
+            <div className="modal-actions">
+              <button onClick={() => setModalOpen(false)}>Cancelar</button>
+              <button onClick={confirmarAgendamento}>Confirmar</button>
             </div>
           </div>
+        </div>
       )}
-
     </div>
   );
 }
