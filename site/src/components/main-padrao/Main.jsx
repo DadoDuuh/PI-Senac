@@ -12,10 +12,10 @@ export default function Main(props) {
     "/login",
     "/cadastro",
     "/busca",
-    "/agendamentos",
+    "/conta",
   ].some((route) => location.pathname.startsWith(route));
   const isUserPage = location.pathname.startsWith("/busca");
-  const isAgendamentosPage = location.pathname.startsWith("/agendamentos");
+  const isPacientePage = location.pathname.startsWith("/conta/paciente");
 
   useEffect(() => {
     const handleScroll = () => {
@@ -52,9 +52,9 @@ export default function Main(props) {
     navigate("/");
   };
 
-  const irParaAgendamentos = (e) => {
+  const irParaAgendamentosPaciente = (e) => {
     e.preventDefault();
-    navigate("/agendamentos");
+    navigate("/conta/paciente");
   };
 
     const irParaPaginaPacienteBuscaPsicologos = (e) => {
@@ -132,14 +132,14 @@ export default function Main(props) {
 
             {isUserPage && (
               <div
-                onClick={irParaAgendamentos}
+                onClick={irParaAgendamentosPaciente}
                 className="btn btn-outline-primary btn-login"
               >
                 Meus Agendamentos
               </div>
             )}
 
-            {isAgendamentosPage && (
+            {isPacientePage && (
               <div
                 onClick={irParaPaginaPacienteBuscaPsicologos}
                 className="btn btn-outline-primary btn-login"
