@@ -17,7 +17,7 @@ export async function cadastroPaciente(nome, cpf, email, senha, telefone) {
         console.log("✅ RESPOSTA DO BACKEND:", resposta.data);
         return resposta.data;
     } catch (error) {
-        console.error("❌ ERRO NA REQUISIÇÃO:", error.response?.data || error.message);
+        console.error("ERRO NA REQUISIÇÃO:", error.response?.data || error.message);
         throw error;
     }
 }

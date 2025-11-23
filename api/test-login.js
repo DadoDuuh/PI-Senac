@@ -7,7 +7,7 @@ async function testarLogin() {
         console.log("2. Resultado:", rows);
         console.log("3. Primeiro registro:", rows[0]);
     } catch (error) {
-        console.error("❌ ERRO:", error);
+        console.error("ERRO:", error);
     } finally {
         process.exit();
     }

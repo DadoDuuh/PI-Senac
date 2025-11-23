@@ -47,7 +47,7 @@ router.get('/perfil/:id', async (req, res) => {
         }
         res.status(200).json(paciente);
     } catch (error) {
-        console.error("❌ Erro ao buscar perfil:", error);
+        console.error("Erro ao buscar perfil:", error);
         res.status(500).json({ error: error.message });
     }
 });

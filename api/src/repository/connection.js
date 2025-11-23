@@ -17,7 +17,7 @@ pool.getConnection()
         connection.release();
     })
     .catch(err => {
-        console.error('❌ Erro ao conectar no banco:', err.message);
+        console.error('Erro ao conectar no banco:', err.message);
     });
 
 console.log('Pool de conexões MySQL criado com sucesso!');

@@ -34,13 +34,13 @@ app.get('/health', (req, res) => {
 
 // Rota de erro 404
 app.use((req, res) => {
-    console.log('❌ 404 - Rota não encontrada:', req.url);
+    console.log('404 - Rota não encontrada:', req.url);
     res.status(404).send('Rota não encontrada');
 });
 
 // Rota de erro 500
 app.use((err, req, res, next) => {
-    console.error('❌ ERRO 500:', err.stack);
+    console.error('ERRO 500:', err.stack);
     res.status(500).send('Erro interno do servidor');
 });
 

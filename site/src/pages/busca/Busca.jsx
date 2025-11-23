@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { buscarPerfilPaciente } from "../../api/pacienteApi";
+import { agendarConsulta } from "../../api/consultaApi";
 import "./Busca.scss";
 
 export default function Busca() {
@@ -9,6 +10,10 @@ export default function Busca() {
   const [selectedSpecialty, setSelectedSpecialty] = useState("all");
   const [paciente, setPaciente] = useState(null);
   const [loading, setLoading] = useState(true);
+
+  const [modalOpen, setModalOpen] = useState(false);
+  const [psicologoSelecionado, setPsicologoSelecionado] = useState(null);
+  const [dataHoraSelecionada, setDataHoraSelecionada] = useState("");
 
   // Busca dados do paciente ao carregar a página
   useEffect(() => {
@@ -95,8 +100,34 @@ export default function Busca() {
     return matchesSearch && matchesSpecialty;
   });
 
-  const handleSchedule = (psychologistId) => {
-    navigate(`/agendar/${psychologistId}`);
+  // Abre modal de agendamento
+  const handleSchedule = (psychologist) => {
+    setPsicologoSelecionado(psychologist)
+    setModalOpen(true);
+  };
+
+  // Confirmação de agendamento
+  const confirmarAgendamento = async () => {
+    try {
+      if (!dataHoraSelecionada) {
+        alert("Por favor, selecione uma data e horário");
+        return;
+      }
+      const usuarioId = localStorage.getItem('usuarioId');
+
+      await agendarConsulta(usuarioId, psicologoSelecionado.id, dataHoraSelecionada);
+
+      alert("Consulta agendada com sucesso! Aguarde a confirmação do psicólogo.");
+      setModalOpen(false);
+      setPsicologoSelecionado(null);
+      setDataHoraSelecionada("");
+
+      navigate('/conta/paciente');
+
+    } catch (error) {
+      console.error("Erro ao agendar:", error);
+      alert("Erro ao agendar consulta. Tente novamente.");
+    }
   };
 
   if (loading) {
@@ -123,7 +154,7 @@ export default function Busca() {
             <div className="search-bar">
               <i className="fas fa-search"></i>
               <input
-                type="text"
+                type="text" readOnly
                 placeholder="Buscar por nome ou especialidade..."
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
@@ -203,7 +234,7 @@ export default function Busca() {
                     <span className="price">{psychologist.price}</span>
                     <button 
                       className="btn-schedule"
-                      onClick={() => handleSchedule(psychologist.id)}
+                      onClick={() => handleSchedule(psychologist)}
                     >
                       Agendar Consulta
                     </button>
@@ -220,6 +251,30 @@ export default function Busca() {
           )}
         </div>
       </main>
+
+      {modalOpen && psicologoSelecionado && (
+          <div className="modal-overlay" onClick={() => setModalOpen(false)}>
+            <div className="modal-content" onClick={(e) => e.stopPropagation()}>
+              <h2>Agendar Consulta</h2>
+              <h3>{psicologoSelecionado.name}</h3>
+              <p>{psicologoSelecionado.specialty}</p>
+
+              <label>Selecione data e horário:</label>
+              <input
+                  type="datetime-local"
+                  value={dataHoraSelecionada}
+                  onChange={(e) => setDataHoraSelecionada(e.target.value)}
+                  min={new Date().toISOString().slice(0, 16)}
+              />
+
+              <div className="modal-actions">
+                <button onClick={() => setModalOpen(false)}>Cancelar</button>
+                <button onClick={confirmarAgendamento}>Confirmar</button>
+              </div>
+            </div>
+          </div>
+      )}
+
     </div>
   );
 }

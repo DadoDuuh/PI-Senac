@@ -1,4 +1,3 @@
-DROP DATABASE IF EXISTS saude_mental;
 CREATE DATABASE IF NOT EXISTS saude_mental;
 USE saude_mental;
 
@@ -16,6 +15,7 @@ CREATE TABLE pacientes (
   nome VARCHAR(100) NOT NULL,
   cpf CHAR(11) UNIQUE NOT NULL,
   telefone VARCHAR(20),
+  created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
   FOREIGN KEY (usuario_id) REFERENCES usuarios(id) ON DELETE CASCADE
 );
 
@@ -34,8 +34,55 @@ CREATE TABLE agendamentos (
   paciente_id INT NOT NULL,
   psicologo_id INT NOT NULL,
   data_hora DATETIME NOT NULL,
-  status ENUM('confirmado', 'reagendado', 'cancelado') DEFAULT 'confirmado',
+  status ENUM('pendente', 'confirmado', 'reagendado', 'cancelado') DEFAULT 'pendente',
+  link_atendimento VARCHAR(500),
   created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
   FOREIGN KEY (paciente_id) REFERENCES pacientes(id) ON DELETE CASCADE,
   FOREIGN KEY (psicologo_id) REFERENCES psicologos(id) ON DELETE CASCADE
 );
+
+-- DADOS MOCKADOS PARA TESTES
+
+-- Inserir usuários para os psicólogos (senha: "senha123")
+INSERT INTO usuarios (email, senha, tipo) VALUES
+    ('ana.silva@psicoacolher.com', '$2b$10$zgHdDRYpxOwjC8KxIW.M6eU.1xahreuClDk8E9hW0uCa3nwxfd9SS', 'psicologo'),
+    ('carlos.mendes@psicoacolher.com', '$2b$10$zgHdDRYpxOwjC8KxIW.M6eU.1xahreuClDk8E9hW0uCa3nwxfd9SS', 'psicologo'),
+    ('mariana.oliveira@psicoacolher.com', '$2b$10$zgHdDRYpxOwjC8KxIW.M6eU.1xahreuClDk8E9hW0uCa3nwxfd9SS', 'psicologo'),
+    ('rafael.costa@psicoacolher.com', '$2b$10$zgHdDRYpxOwjC8KxIW.M6eU.1xahreuClDk8E9hW0uCa3nwxfd9SS', 'psicologo');
+
+-- Inserir psicólogos
+INSERT INTO psicologos (usuario_id, nome, crp, especialidade, disponivel) VALUES
+    (1, 'Dra. Ana Silva', 'CRP-06/123456', 'Ansiedade e Depressão', TRUE),
+    (2, 'Dr. Carlos Mendes', 'CRP-06/234567', 'TCC', TRUE),
+    (3, 'Dra. Mariana Oliveira', 'CRP-06/345678', 'Infantil', TRUE),
+    (4, 'Dr. Rafael Costa', 'CRP-06/456789', 'Casais e Família', TRUE);
+
+-- Inserir usuários para os pacientes (senha: "senha123")
+INSERT INTO usuarios (email, senha, tipo) VALUES
+    ('fulano.silva@email.com', '$2b$10$zgHdDRYpxOwjC8KxIW.M6eU.1xahreuClDk8E9hW0uCa3nwxfd9SS', 'paciente'),
+    ('sicrano.beltrano@email.com', '$2b$10$zgHdDRYpxOwjC8KxIW.M6eU.1xahreuClDk8E9hW0uCa3nwxfd9SS', 'paciente'),
+    ('maria.souza@email.com', '$2b$10$zgHdDRYpxOwjC8KxIW.M6eU.1xahreuClDk8E9hW0uCa3nwxfd9SS', 'paciente'),
+    ('joao.ferreira@email.com', '$2b$10$zgHdDRYpxOwjC8KxIW.M6eU.1xahreuClDk8E9hW0uCa3nwxfd9SS', 'paciente');
+
+-- Inserir pacientes
+INSERT INTO pacientes (usuario_id, nome, cpf, telefone) VALUES
+    (5, 'Fulano da Silva', '11111111111', '11911111111'),
+    (6, 'Sicrano Beltrano', '22222222222', '11922222222'),
+    (7, 'Maria Souza', '33333333333', '11933333333'),
+    (8, 'João Ferreira', '44444444444', '11944444444');
+
+-- Agendamentos do Fulano da Silva (paciente_id = 1)
+INSERT INTO agendamentos (paciente_id, psicologo_id, data_hora, status, link_atendimento) VALUES
+    (1, 1, '2025-12-15 14:00:00', 'pendente', NULL); -- Dra. Ana Silva - aguardando confirmação
+
+-- Agendamentos do Sicrano Beltrano (paciente_id = 2)
+INSERT INTO agendamentos (paciente_id, psicologo_id, data_hora, status, link_atendimento) VALUES
+    (2, 2, '2025-12-16 15:00:00', 'pendente', NULL); -- Dr. Carlos Mendes - aguardando confirmação
+
+-- Agendamentos da Maria Souza (paciente_id = 3)
+INSERT INTO agendamentos (paciente_id, psicologo_id, data_hora, status, link_atendimento) VALUES
+    (3, 3, '2023-03-28 10:00:00', 'confirmado', 'https://meet.google.com/abc-defg-hij'); -- Dra. Mariana - finalizada
+
+-- Agendamentos do João Ferreira (paciente_id = 4)
+INSERT INTO agendamentos (paciente_id, psicologo_id, data_hora, status, link_atendimento) VALUES
+    (4, 4, '2023-03-10 09:00:00', 'confirmado', NULL); -- Dr. Rafael - finalizada (presencial)
