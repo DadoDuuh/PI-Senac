@@ -453,6 +453,7 @@ export default function Psicologo() {
 
   return (
     <div className="conta-page">
+      <ToastContainer position="top-right" autoClose={2500} />
       <header className="conta-header">
         <div className="container-contas">
           <div className="container-perfil">
