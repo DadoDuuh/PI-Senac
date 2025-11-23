@@ -1,6 +1,13 @@
 import { Router } from 'express';
-import { listarConsultas, agendarConsulta, getConsultasByPaciente, getSolicitacoesByPsicologo, confirmarConsulta,
-    cancelarConsulta } from '../repository/consultaRepository.js';
+import {
+    listarConsultas,
+    agendarConsulta,
+    getConsultasByPaciente,
+    getConsultasByPsicologo,
+    getSolicitacoesByPsicologo,
+    confirmarConsulta,
+    cancelarConsulta
+} from '../repository/consultaRepository.js';
 import { findPacienteByUsuarioId } from '../repository/pacienteRepository.js';
 import { findPsicologoByUsuarioId } from '../repository/psicologoRepository.js';
 
@@ -54,6 +61,24 @@ router.get('/paciente/:usuarioId', async (req, res) => {
         }
 
         const consultas = await getConsultasByPaciente(paciente.id);
+        res.json(consultas);
+    } catch (error) {
+        console.error("Erro ao buscar consultas:", error);
+        res.status(500).json({ error: error.message });
+    }
+});
+
+// Buscar consultas do psicólogo
+router.get('/psicologo/:usuarioId', async (req, res) => {
+    try {
+        const { usuarioId } = req.params;
+
+        const psicologo = await findPsicologoByUsuarioId(usuarioId);
+        if (!psicologo) {
+            return res.status(404).json({ error: 'Psicólogo não encontrado' });
+        }
+
+        const consultas = await getConsultasByPsicologo(psicologo.id);
         res.json(consultas);
     } catch (error) {
         console.error("Erro ao buscar consultas:", error);

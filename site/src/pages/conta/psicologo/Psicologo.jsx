@@ -5,16 +5,23 @@ import React, { useEffect, useState } from "react";
 import ModalPadrao from "../../../components/modal-padrao";
 import { buscarPerfilPsicologo } from "../../../api/psicologoApi";
 import { useNavigate } from "react-router-dom";
+import {
+  buscarConsultasPsicologo,
+  cancelarConsulta,
+  confirmarConsulta
+} from "../../../api/consultaApi";
 
 export default function Psicologo() {
+  const navigate = useNavigate();
+  const [psicologo, setPsicologo] = useState(null);
+  const [pacientes, setPacientes] = useState(null);
+  const [consultas, setConsultas] = useState([]);
+  const [loading, setLoading] = useState(true);
   const [modalOpen, setModalOpen] = useState(false);
   const [consultaSelecionada, setConsultaSelecionada] = useState(null);
   const [modalAnotacoesOpen, setModalAnotacoesOpen] = useState(false);
   const [consultaAnotacaoSelecionada, setConsultaAnotacaoSelecionada] =
     useState(null);
-  const navigate = useNavigate();
-  const [psicologo, setPsicologo] = useState(null);
-  const [loading, setLoading] = useState(true);
 
   // Busca dados do psicólogo ao carregar a página
   useEffect(() => {
@@ -25,15 +32,67 @@ export default function Psicologo() {
           navigate('/login');
           return;
         }
-        const dados = await buscarPerfilPsicologo(usuarioId);
-        setPsicologo(dados);
+
+        const dadosPsicologo = await buscarPerfilPsicologo(usuarioId);
+        setPsicologo(dadosPsicologo);
+
+        const dadosConsultas = await buscarConsultasPsicologo(usuarioId);
+        console.log("Consultas do psicólogo:", dadosConsultas);
+        console.log("Quantidade de consultas:", dadosConsultas.length);
+
+        // Log de cada consulta
+        dadosConsultas.forEach((c, i) => {
+          console.log(`Consulta ${i + 1}:`, {
+            id: c.id,
+            paciente: c.paciente_nome,
+            data: c.data_hora,
+            status: c.status,
+            link: c.link_atendimento
+          });
+        });
+
+        setConsultas(dadosConsultas);
+
       } catch (error) {
         alert("Erro ao carregar seus dados");
       } finally {
         setLoading(false);
       }
-    } carregarPerfil();
+    }
+    carregarPerfil();
   }, [navigate]);
+
+  useEffect(() => {
+    async function carregarDados() {
+      try {
+        const usuarioId = localStorage.getItem('usuarioId');
+        if (!usuarioId) {
+          navigate('/login');
+          return;
+        }
+        const dadosPacientes = await buscarConsultasPsicologo(usuarioId);
+        console.log("🔍 Pacientes do banco:", dadosPacientes);
+
+        // Mocks:
+        const gerarConsistente = (id, max) => {
+          return (id * 7 + 13) % max;
+        };
+
+        const pacientesFormatados = dadosPacientes.map(paciente => ({
+          id: paciente.id,
+          name: paciente.nome,
+          data: "28/03/2023 às 10:00",
+          image: `https://i.pravatar.cc/300?img=${paciente.id}`,
+          verified: true
+        }));
+        console.log("✅ Pacientes formatados:", pacientesFormatados);
+        setPacientes(pacientesFormatados);
+      } catch (error) {
+        console.error("Erro ao carregar pacientes:", error);
+      }
+    }
+    carregarDados();
+  }, []);
 
   function abrirModalConfirmar(consulta) {
     setConsultaSelecionada(consulta);
@@ -55,72 +114,58 @@ export default function Psicologo() {
     setConsultaAnotacaoSelecionada(null);
   }
 
-  const consultasProximas = [
-    {
-      id: 1,
-      nome: "Fulano da Silva",
-      especialidade: "Ansiedade e Depressão",
-      data: "15/05/2023 às 14:00",
-      duracao: "50 min",
-      tipo: "Online - PsicoAcolher",
-      foto: "https://i.pravatar.cc/150?img=12",
-      acoes: ["Acessar chat", "Iniciar consulta", "Reagendar", "Cancelar"],
-    },
-    {
-      id: 2,
-      nome: "Sicrano Beltrano",
-      especialidade: "Ansiedade e Depressão",
-      data: "16/05/2023 às 15:00",
-      duracao: "50 min",
-      tipo: "Online - PsicoAcolher",
-      foto: "https://i.pravatar.cc/150?img=32",
-      acoes: ["Acessar chat", "Iniciar consulta", "Reagendar", "Cancelar"],
-    },
-  ];
+  // Próximas consultas [confirmadas]:
+  const consultasProximas = consultas.filter(c =>
+      c.status === 'confirmado' && new Date(c.data_hora) > new Date()
+  );
 
-  const consultasSolicitacoes = [
-    {
-      id: 1,
-      nome: "Fulano da Silva",
-      especialidade: "Ansiedade e Depressão",
-      data: "15/05/2023 às 14:00",
-      duracao: "50 min",
-      tipo: "Online - PsicoAcolher",
-      foto: "https://i.pravatar.cc/150?img=12",
-    },
-    {
-      id: 2,
-      nome: "Sicrano Beltrano",
-      especialidade: "Ansiedade e Depressão",
-      data: "16/05/2023 às 15:00",
-      duracao: "50 min",
-      tipo: "Online - PsicoAcolher",
-      foto: "https://i.pravatar.cc/150?img=32",
-    },
-  ];
+  // Histórico de consultas [realizadas]:
+  const consultasHistorico = consultas.filter(c =>
+      c.status === 'confirmado' && new Date(c.data_hora) <= new Date()
+  );
 
-  const consultasHistorico = [
-    {
-      id: 101,
-      nome: "Paciente Maria Souza",
-      especialidade: "Terapia Cognitiva",
-      data: "28/03/2023 às 10:00",
-      duracao: "50 min",
-      tipo: "Online - PsicoAcolher",
-      foto: "https://i.pravatar.cc/150?img=47",
-      status: "Finalizada",
-    },
-    {
-      id: 102,
-      nome: "Paciente João Ferreira",
-      especialidade: "Psicanálise",
-      data: "10/03/2023 às 09:00",
-      duracao: "50 min",
-      tipo: "Presencial - Av. Paulista, 900",
-      foto: "https://i.pravatar.cc/150?img=58",
-      status: "Finalizada",
-    },
-  ];
+  // Solicitações de consulta pendentes [de confirmação]
+  const consultasSolicitacoes = consultas.filter(c =>
+      c.status === 'pendente'
+  );
+
+  const handleCancelar = async (agendamentoId) => {
+    if (!window.confirm("Tem certeza que deseja cancelar esta consulta?")) {
+      return;
+    }
+
+    try {
+      await cancelarConsulta(agendamentoId);
+      alert("Consulta cancelada com sucesso!");
+
+      // Recarrega as consultas
+      const usuarioId = localStorage.getItem('usuarioId');
+      const dadosConsultas = await buscarConsultasPsicologo(usuarioId);
+      setConsultas(dadosConsultas);
+    } catch (error) {
+      console.error("Erro ao cancelar:", error);
+      alert("Erro ao cancelar consulta");
+    }
+  };
+
+  const handleIniciarConsulta = (linkAtendimento) => {
+    if (linkAtendimento) {
+      window.open(linkAtendimento, '_blank');
+    } else {
+      alert("Consulta ainda não foi confirmada");
+    }
+  };
+
+  const formatarDataHora = (dataHora) => {
+    const data = new Date(dataHora);
+    return data.toLocaleString('pt-BR', {
+      day: '2-digit',
+      month: '2-digit',
+      year: 'numeric',
+      hour: '2-digit',
+      minute: '2-digit'
+    });
+  };
 
   let usuarioObj = {
     id: 1,
@@ -131,53 +176,6 @@ export default function Psicologo() {
     aceitandoNovasSolicitacoes: true,
     biografia:
       "Especialista em ansiedade e depressão, com abordagem humanista e 10 anos de experiência clínica.",
-    consultasProximas: [
-      {
-        id: 1,
-        nome: "Fulano da Silva",
-        especialidade: "Ansiedade e Depressão",
-        data: "15/05/2023 às 14:00",
-        duracao: "50 min",
-        tipo: "Online - PsicoAcolher",
-        foto: "https://i.pravatar.cc/150?img=12",
-        acoes: ["Acessar chat", "Iniciar consulta", "Reagendar", "Cancelar"],
-      },
-      {
-        id: 2,
-        nome: "Sicrano Beltrano",
-        especialidade: "Ansiedade e Depressão",
-        data: "16/05/2023 às 15:00",
-        duracao: "50 min",
-        tipo: "Online - PsicoAcolher",
-        foto: "https://i.pravatar.cc/150?img=32",
-        acoes: ["Acessar chat", "Iniciar consulta", "Reagendar", "Cancelar"],
-      },
-    ],
-
-    consultasHistorico: [
-      {
-        id: 101,
-        nome: "Paciente Maria Souza",
-        especialidade: "Terapia Cognitiva",
-        data: "28/03/2023 às 10:00",
-        duracao: "50 min",
-        tipo: "Online - PsicoAcolher",
-        foto: "https://i.pravatar.cc/150?img=47",
-        status: "Finalizada",
-        acoes: ["Ver detalhes"],
-      },
-      {
-        id: 102,
-        nome: "Paciente João Ferreira",
-        especialidade: "Psicanálise",
-        data: "10/03/2023 às 09:00",
-        duracao: "50 min",
-        tipo: "Presencial - Av. Paulista, 900",
-        foto: "https://i.pravatar.cc/150?img=58",
-        status: "Finalizada",
-        acoes: ["Ver detalhes"],
-      },
-    ],
   };
 
   function renderProximasConsultas() {
@@ -187,32 +185,44 @@ export default function Psicologo() {
           <div key={consulta.id} className="consulta-card">
             <div className="profissional-info">
               <img
-                src={consulta.foto}
-                alt={consulta.nome}
-                className="foto-profissional"
+                  src={`https://i.pravatar.cc/150?img=${consulta.paciente_id}`}
+                  alt={consulta.paciente_nome}
+                  className="foto-profissional"
               />
               <div>
-                <h3>{consulta.nome}</h3>
-
+                <h3>{consulta.paciente_nome}</h3>
                 <p className="data">
-                  <i className="icon-calendar"></i> {consulta.data}
+                  <i className="icon-calendar"></i> {formatarDataHora(consulta.data_hora)}
                 </p>
-
                 <p className="info">
-                  {consulta.duracao} · {consulta.tipo}
+                  50 min · {consulta.link_atendimento ? 'Online - PsicoAcolher' : 'Aguardando confirmação'}
                 </p>
               </div>
             </div>
 
             <div className="acoes">
-              {consulta.acoes.map((acao, index) => (
-                <button
-                  key={index}
-                  className={`btn-${acao.toLowerCase().replace(" ", "-")}`}
-                >
-                  {acao}
-                </button>
-              ))}
+              <button
+                  className="btn-cancelar"
+                  onClick={() => handleCancelar(consulta.id)}
+              >
+                Cancelar
+              </button>
+
+              {consulta.link_atendimento && (
+                  <button
+                      className="btn-iniciar-consulta"
+                      onClick={() => handleIniciarConsulta(consulta.link_atendimento)}
+                  >
+                    Iniciar consulta
+                  </button>
+              )}
+
+              <button
+                  className="btn-acessar-chat"
+                  onClick={() => navigate('/chat')}
+              >
+                Acessar chat
+              </button>
             </div>
           </div>
         ))}
@@ -253,6 +263,30 @@ export default function Psicologo() {
   }
 
   function ModalConfirmarConteudo({ consulta, onClose }) {
+    const [linkAtendimento, setLinkAtendimento] = useState('');
+
+    const handleConfirmar = async () => {
+      try {
+        if (!linkAtendimento.trim()) {
+          alert("Por favor, insira o link da reunião");
+          return;
+        }
+
+        await confirmarConsulta(consulta.id, linkAtendimento);
+        alert("Consulta confirmada com sucesso!");
+
+        // Recarrega consultas
+        const usuarioId = localStorage.getItem('usuarioId');
+        const dadosConsultas = await buscarConsultasPsicologo(usuarioId);
+        setConsultas(dadosConsultas);
+
+        onClose();
+      } catch (error) {
+        console.error("Erro ao confirmar:", error);
+        alert("Erro ao confirmar consulta");
+      }
+    };
+
     return (
       <div className="modal-container">
         <h2 className="title">Agendamento de consulta</h2>
@@ -264,44 +298,71 @@ export default function Psicologo() {
 
         <p className="data-select">
           <i className="icon-calendar"></i> Consulta a ser realizada em{" "}
-          <strong>{consulta.data}</strong>
+          <strong>{formatarDataHora(consulta.data_hora)}</strong>
+        </p>
+
+        <p className="data-select">
+          <strong>Paciente:</strong> {consulta.paciente_nome}
         </p>
 
         <label className="label">
           Link da reunião a ser enviada para o paciente
         </label>
-        <input type="text" className="input" placeholder="Link" />
+        <input
+            type="url"
+            className="input"
+            placeholder="https://meet.google.com/..."
+            value={linkAtendimento}
+            onChange={(e) => setLinkAtendimento(e.target.value)}
+        />
 
         <div className="buttons-row">
           <button className="btn-cancelar" onClick={onClose}>
             Cancelar
           </button>
 
-          <button className="btn-confirmar">Enviar</button>
+          <button className="btn-confirmar" onClick={handleConfirmar}>
+            Confirmar e Enviar</button>
         </div>
       </div>
     );
   }
 
   function renderSolicitacoesConsultas() {
+    if (consultasSolicitacoes.length === 0) {
+      return (
+          <div style={{ padding: '2rem', textAlign: 'center', color: '#665' }}>
+            <p>Não há solicitações pendentes no momento.</p>
+          </div>
+      );
+    }
+
     return (
       <>
         {consultasSolicitacoes.map((consulta) => (
           <div key={consulta.id} className="consulta-card">
             <div className="profissional-info">
-              <img src={consulta.foto} alt="" className="foto-profissional" />
+              <img
+                  src={ `https://i.pravatar.cc/150?img=${consulta.paciente_id}` }
+                  alt="{consulta.paciente_nome}"
+                  className="foto-profissional"
+              />
               <div>
-                <h3>{consulta.nome}</h3>
+                <h3>{consulta.paciente_nome}</h3>
                 <p className="data">
-                  <i className="icon-calendar" /> {consulta.data}
+                  <i className="icon-calendar" /> {formatarDataHora(consulta.data_hora)}
                 </p>
-                <p className="info">{consulta.duracao}</p>
-                <p className="info">{consulta.tipo}</p>
+                <p className="info">50 min · Aguardando confirmação</p>
               </div>
             </div>
 
             <div className="acoes">
-              <button className="btn-acessar">Acessar chat</button>
+              <button
+                  className="btn-acessar"
+                  onClick={() => navigate('/chat')}
+              >
+                Acessar chat
+              </button>
 
               <button
                 className="btn-confirmar"
@@ -310,7 +371,12 @@ export default function Psicologo() {
                 Confirmar
               </button>
 
-              <button className="btn-cancelar">Cancelar</button>
+              <button
+                  className="btn-cancelar"
+                  onClick={() => handleCancelar(consulta.id)}
+              >
+                Recusar
+              </button>
             </div>
           </div>
         ))}
@@ -325,23 +391,19 @@ export default function Psicologo() {
           <div key={consulta.id} className="consulta-card">
             <div className="profissional-info">
               <img
-                src={consulta.foto}
-                alt={consulta.nome}
-                className="foto-profissional"
+                  src={`https://i.pravatar.cc/150?img=${consulta.paciente_id}`}
+                  alt={consulta.paciente_nome}
+                  className="foto-profissional"
               />
-
               <div>
-                <h3>{consulta.nome}</h3>
+                <h3>{consulta.paciente_nome}</h3>
                 <p className="especialidade">{consulta.especialidade}</p>
-
                 <p className="data">
-                  <i className="icon-calendar"></i> {consulta.data}
+                  <i className="icon-calendar"></i> {formatarDataHora(consulta.data_hora)}
                 </p>
-
                 <p className="info">
-                  {consulta.duracao} · {consulta.tipo}
+                  50 min · {consulta.link_atendimento ? 'Online' : 'Presencial'}
                 </p>
-
                 <p
                   className="info"
                   style={{ marginTop: "6px", color: "#6c757d" }}
@@ -359,11 +421,24 @@ export default function Psicologo() {
                 Anotações
               </button>
 
-              <button className="btn-ver-detalhes">Acessar chat</button>
+              <button
+                  className="btn-ver-detalhes"
+                  onClick={() => navigate('/chat')}
+              >Acessar chat</button>
             </div>
           </div>
         ))}
       </>
+    );
+  }
+
+  if (loading) {
+    return (
+        <div className="conta-page">
+          <div style={{ padding: '2rem', textAlign: 'center' }}>
+            <p>Carregando...</p>
+          </div>
+        </div>
     );
   }
 
@@ -374,15 +449,15 @@ export default function Psicologo() {
           <div className="container-perfil">
             <img
               className="img-perfil"
-              src={usuarioObj.fotoPerfil}
-              alt={usuarioObj.nome}
+              src="https://i.pinimg.com/736x/47/30/38/473038bf60343d88ccb4188c0df1c544.jpg"
+              alt=""
             />
             <img className="img-lapis" src={lapisIcon} alt="" />
           </div>
 
           <div className="usu-info">
             <div className="top-row">
-              <h1>{usuarioObj.nome}</h1>
+              <h1>{psicologo?.nome || "Psicólogo"}</h1>
 
               <div className="tags">
                 {usuarioObj.categorias.slice(0, 3).map((cat, i) => (

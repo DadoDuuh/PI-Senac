@@ -20,6 +20,5 @@ export async function buscarPerfilPsicologo(usuarioId) {
 
 export async function psicologosDisponiveis() {
     const resposta = await api.get('/psicologos/disponiveis');
-
     return resposta.data;
 }

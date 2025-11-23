@@ -3,12 +3,14 @@ import { useNavigate } from "react-router-dom";
 import { buscarPerfilPaciente } from "../../api/pacienteApi";
 import { agendarConsulta } from "../../api/consultaApi";
 import "./Busca.scss";
+import {psicologosDisponiveis} from "../../api/psicologoApi";
 
 export default function Busca() {
   const navigate = useNavigate();
   const [searchTerm, setSearchTerm] = useState("");
   const [selectedSpecialty, setSelectedSpecialty] = useState("all");
   const [paciente, setPaciente] = useState(null);
+  const [psicologos, setPsicologos] = useState([]);
   const [loading, setLoading] = useState(true);
 
   const [modalOpen, setModalOpen] = useState(false);
@@ -31,59 +33,43 @@ export default function Busca() {
       } finally {
         setLoading(false);
       }
-    } carregarPerfil();
+    }
+    carregarPerfil();
   }, [navigate]);
 
-  const psicologos = [
-    {
-      id: 1,
-      name: "Dra. Ana Silva",
-      specialty: "Ansiedade e Depressão",
-      approach: "Humanista",
-      experience: "10 anos",
-      image: "https://images.unsplash.com/photo-1559839734-2b71ea197ec2",
-      rating: 4.8,
-      availableSlots: ["Seg 14:00", "Qua 10:00", "Sex 16:00"],
-      price: "Gratuito",
-      verified: true
-    },
-    {
-      id: 2,
-      name: "Dr. Carlos Mendes",
-      specialty: "TCC",
-      approach: "Cognitivo-Comportamental",
-      experience: "7 anos",
-      image: "https://images.unsplash.com/photo-1612349317150-e413f6a5b16d",
-      rating: 4.9,
-      availableSlots: ["Ter 09:00", "Qui 15:00", "Sab 11:00"],
-      price: "Gratuito",
-      verified: true
-    },
-    {
-      id: 3,
-      name: "Dra. Mariana Oliveira",
-      specialty: "Infantil",
-      approach: "Ludoterapia",
-      experience: "5 anos",
-      image: "https://images.unsplash.com/photo-1643297654416-05795d62e39c",
-      rating: 4.7,
-      availableSlots: ["Seg 16:00", "Qua 14:00", "Sex 10:00"],
-      price: "Gratuito",
-      verified: true
-    },
-    {
-      id: 4,
-      name: "Dr. Rafael Costa",
-      specialty: "Casais e Família",
-      approach: "Sistêmica",
-      experience: "12 anos",
-      image: "https://images.unsplash.com/photo-1622253692010-333f2da6031d",
-      rating: 4.6,
-      availableSlots: ["Ter 18:00", "Qui 20:00"],
-      price: "Gratuito",
-      verified: false
+  useEffect(() => {
+    async function carregarDados() {
+      try {
+        const dadosPsicologos = await psicologosDisponiveis();
+        console.log("🔍 Psicólogos do banco:", dadosPsicologos);
+
+        // Mocks:
+        const abordagens = ['Sistêmica', 'TCC', 'Humanista', 'Cognitivo-Comportamental', 'Psicanálise'];
+        const gerarConsistente = (id, max) => {
+          return (id * 7 + 13) % max;
+        };
+
+        const psicologosFormatados = dadosPsicologos.map(psi => ({
+          id: psi.id,
+          name: psi.nome,
+          specialty: psi.especialidade,
+          approach: abordagens[gerarConsistente(psi.id, abordagens.length)],
+          experience: `${gerarConsistente(psi.id, 30) + 1} anos`,
+          image: `https://i.pravatar.cc/300?img=${psi.id}`,
+          rating: (4.5 + (gerarConsistente(psi.id, 10) / 20)).toFixed(1),
+          availableSlots: ["Seg 14:00", "Qua 10:00", "Sex 16:00"],
+          price: "Gratuito",
+          verified: true
+        }));
+        console.log("✅ Psicólogos formatados:", psicologosFormatados);
+        setPsicologos(psicologosFormatados);
+      } catch (error) {
+        console.error("Erro ao carregar psicólogos:", error);
+      }
     }
-  ];
+
+    carregarDados();
+  }, []);
 
   const specialties = [
     { value: "all", label: "Todas Especialidades" },
