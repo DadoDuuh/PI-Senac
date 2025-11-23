@@ -20,7 +20,13 @@ export async function buscarConsultasPaciente(usuarioId) {
     return resposta.data;
 }
 
-// Buscar solicitações do psicólogo
+// Buscar consultas do psicólogo
+export async function buscarConsultasPsicologo(usuarioId) {
+    const resposta = await api.get(`/consultas/psicologo/${usuarioId}`);
+    return resposta.data;
+}
+
+// Buscar solicitações pendentes
 export async function buscarSolicitacoesPsicologo(usuarioId) {
     const resposta = await api.get(`/consultas/psicologo/${usuarioId}/solicitacoes`);
     return resposta.data;

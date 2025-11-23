@@ -30,7 +30,9 @@
  path="/login" /> </br>
  path="/cadastro" /> </br>
  path="/busca" /> </br>
- path="/agendamentos" /> </br>
+ path="/conta/paciente" /> </br>
+path="/conta/paciente" /> </br>
+
  (Certificar-se de que tais string sejam colocadas na URL da página)
 
-- O projeto, em sua fase inicial, contempla as funcionalidades de visualização da página inicial (home), login e cadastro, todas integradas à API e com comunicação direta com o banco de dados. As seções de visualização dos psicólogos disponíveis e dos agendamentos realizados, nessa PI, estão mockadas — ou seja, os dados são fixos no código —, mas já representam de forma fiel o fluxo funcional proposto para essas etapas.
+- O projeto, em sua fase inicial, contempla as funcionalidades de visualização da página inicial (home), login e cadastro, todas integradas à API e com comunicação direta com o banco de dados. As seções de visualização dos psicólogos disponíveis e dos agendamentos realizados apresentam dados mockados do schema (fixos no código), mas as funcionalidades de agendamento, em conexão com o banco, já estão disponíveis (fluxo funcional).

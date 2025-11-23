@@ -21,10 +21,24 @@ export async function getConsultasByPaciente(pacienteId) {
             p.especialidade,
             p.crp
         FROM agendamentos a
-        JOIN psicologos p ON a.psicologo.id = p.id
+        JOIN psicologos p ON a.psicologo_id = p.id
         WHERE a.paciente_id = ?
         ORDER BY a.data_hora DESC
     `, [pacienteId]);
+    return rows;
+}
+
+export async function getConsultasByPsicologo(psicologoId) {
+    const [rows] = await pool.query(`
+        SELECT
+            a.*,
+            p.nome as paciente_nome,
+            p.cpf
+        FROM agendamentos a
+        JOIN pacientes p ON a.paciente_id = p.id
+        WHERE a.psicologo_id = ?
+        ORDER BY a.data_hora DESC
+    `, [psicologoId]);
     return rows;
 }
 

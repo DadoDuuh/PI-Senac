@@ -13,8 +13,7 @@ export default function Main(props) {
     "/cadastro",
     "/busca",
     "/agendamentos",
-    "/conta/paciente",
-    "/conta/psicologo",
+    "/conta",
     "/chat",
   ].some((route) => location.pathname.startsWith(route));
   const isUserPage = location.pathname.startsWith("/busca");
@@ -56,9 +55,9 @@ export default function Main(props) {
     navigate("/");
   };
 
-  const irParaAgendamentos = (e) => {
+  const irParaAgendamentosPaciente = (e) => {
     e.preventDefault();
-    navigate("/agendamentos");
+    navigate("/conta/paciente");
   };
 
   const irParaPaginaPacienteBuscaPsicologos = (e) => {
@@ -136,14 +135,14 @@ export default function Main(props) {
 
             {isUserPage && (
               <div
-                onClick={irParaAgendamentos}
+                onClick={irParaAgendamentosPaciente}
                 className="btn btn-outline-primary btn-login"
               >
                 Meus Agendamentos
               </div>
             )}
 
-            {isAgendamentosPage && (
+            {isPacientePage && (
               <div
                 onClick={irParaPaginaPacienteBuscaPsicologos}
                 className="btn btn-outline-primary btn-login"
