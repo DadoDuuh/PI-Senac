@@ -41,6 +41,17 @@ CREATE TABLE agendamentos (
   FOREIGN KEY (psicologo_id) REFERENCES psicologos(id) ON DELETE CASCADE
 );
 
+CREATE TABLE anotacoes (
+  id INT PRIMARY KEY AUTO_INCREMENT,
+  paciente_id INT NOT NULL,
+  psicologo_id INT NOT NULL,
+  consulta_id INT NOT NULL,
+  descricao VARCHAR(1000),
+  FOREIGN KEY (paciente_id) REFERENCES pacientes(id) ON DELETE CASCADE,
+  FOREIGN KEY (psicologo_id) REFERENCES psicologos(id) ON DELETE CASCADE,
+  FOREIGN KEY (consulta_id) REFERENCES agendamentos(id) ON DELETE CASCADE
+);
+
 -- DADOS MOCKADOS PARA TESTES
 
 -- Inserir usuários para os psicólogos (senha: "senha123")

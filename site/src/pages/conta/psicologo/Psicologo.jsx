@@ -10,6 +10,7 @@ import {
   cancelarConsulta,
   confirmarConsulta,
 } from "../../../api/consultaApi";
+import { buscarAnotacoes, inserirAnotacao, alterarAnotacao } from "../../../api/anotacaoApi";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 
@@ -23,6 +24,8 @@ export default function Psicologo() {
   const [consultaSelecionada, setConsultaSelecionada] = useState(null);
   const [modalAnotacoesOpen, setModalAnotacoesOpen] = useState(false);
   const [consultaAnotacaoSelecionada, setConsultaAnotacaoSelecionada] = useState(null);
+  const [descricao, setDescricao] = useState("");
+
 
   // Busca dados do psicólogo ao carregar a página
   useEffect(() => {
@@ -63,6 +66,43 @@ export default function Psicologo() {
     carregarPerfil();
   }, [navigate]);
 
+
+  const handleAnotacao = async (consulta) => {
+    const anotacao = await buscarAnotacoes(consulta.paciente_id, consulta.id, psicologo.id);
+
+    setDescricao(anotacao?.descricao || "");
+
+    abrirModalAnotacoes(consulta)
+  }
+
+  const handleSalvarAnotacao = async (descricao, consulta) => {
+    try {
+      const anotacaoData = {
+        pacienteId: consultaAnotacaoSelecionada.paciente_id,
+        psicologoId: psicologo.id,
+        consultaId: consultaAnotacaoSelecionada.id,
+        descricao: descricao
+      };
+
+      const anotacao = await buscarAnotacoes(consulta.paciente_id, consulta.id, psicologo.id);
+      if (!anotacao || anotacao.length === 0) {
+        await inserirAnotacao(anotacaoData);
+        toast.success("Anotação salva com sucesso!");
+        fecharModalAnotacoes();
+        return;
+      }
+
+      await alterarAnotacao(descricao, anotacao.id);
+      toast.success("Anotação alterada com sucesso!");
+      fecharModalAnotacoes();
+    }
+    catch (error) {
+      console.error("Erro ao salvar anotação:", error);
+      toast.error("Erro ao salvar anotação");
+    }
+  }
+
+
   function abrirModalConfirmar(consulta) {
     setConsultaSelecionada(consulta);
     setModalOpen(true);
@@ -85,17 +125,17 @@ export default function Psicologo() {
 
   // Próximas consultas CONFIRMADAS/PENDENTES:
   const consultasProximas = consultas.filter(c =>
-      (c.status === 'confirmado' || c.status === 'pendente') && new Date(c.data_hora) > new Date()
+    (c.status === 'confirmado' || c.status === 'pendente') && new Date(c.data_hora) > new Date()
   );
 
   // Histórico de consultas CONFIRMADAS/CANCELADAS:
   const consultasHistorico = consultas.filter(c =>
-      (c.status === 'confirmado' && new Date(c.data_hora) <= new Date()) || c.status === 'cancelado'
+    (c.status === 'confirmado' && new Date(c.data_hora) <= new Date()) || c.status === 'cancelado'
   );
 
   // Solicitações de consulta PENDENTES [de confirmação]
   const solicitacoesPendentes = consultas.filter(c =>
-      c.status === 'pendente'
+    c.status === 'pendente'
   );
 
   const handleCancelar = async (agendamentoId) => {
@@ -143,21 +183,21 @@ export default function Psicologo() {
     crp: psicologo?.crp || "CRP-12/345678",
     especialidade: psicologo?.especialidade || "Psicologia Clínica",
     categorias: psicologo?.especialidade
-        ? [psicologo.especialidade, "Terapia", "Acolhimento"]
-        : ["Ansiedade", "Depressão", "Autoestima"],
+      ? [psicologo.especialidade, "Terapia", "Acolhimento"]
+      : ["Ansiedade", "Depressão", "Autoestima"],
     voluntariaDesde: 2025,
     aceitandoNovasSolicitacoes: psicologo?.disponivel ?? true,
     biografia: `Especialização em ${psicologo?.especialidade || "diversas abordagens"}, com experiência em atendimento clínico e acolhimento emocional.`,
   };
 
   function renderProximasConsultas() {
-      if (consultasProximas.length === 0) {
-        return (
-            <div style={{ padding: '2rem', textAlign: 'center', color: '#666' }}>
-              <p>Não há consultas agendadas no momento.</p>
-            </div>
-        );
-      }
+    if (consultasProximas.length === 0) {
+      return (
+        <div style={{ padding: '2rem', textAlign: 'center', color: '#666' }}>
+          <p>Não há consultas agendadas no momento.</p>
+        </div>
+      );
+    }
 
     return (
       <>
@@ -209,6 +249,13 @@ export default function Psicologo() {
               >
                 Acessar chat
               </button>
+
+              <button
+                className="btn-anotacoes"
+                onClick={() => handleAnotacao(consulta)}
+              >
+                Anotações
+              </button>
             </div>
           </div>
         ))}
@@ -217,6 +264,8 @@ export default function Psicologo() {
   }
 
   function ModalAnotacoesConteudo({ consulta, onClose }) {
+    const [descricaoModal, setDescricaoModal] = useState(descricao);
+
     return (
       <div className="modal-container">
         <h2 className="title">Anotações de {consulta.paciente_nome}</h2>
@@ -236,13 +285,21 @@ export default function Psicologo() {
         <textarea
           className="input textarea-anotacoes"
           placeholder="Digite aqui..."
+          value={descricaoModal}
+          onChange={(e) => setDescricaoModal(e.target.value)}
         />
 
         <div className="buttons-row">
           <button className="btn-cancelar" onClick={onClose}>
             Cancelar
           </button>
-          <button className="btn-confirmar">Salvar</button>
+          <button
+            className="btn-confirmar"
+            onClick={() => {
+              handleSalvarAnotacao(descricaoModal, consulta);
+              setDescricao(descricaoModal);
+            }}
+          >Salvar</button>
         </div>
       </div>
     );
@@ -346,8 +403,8 @@ export default function Psicologo() {
 
             <div className="acoes">
               <button
-                  className="btn-acessar"
-                  onClick={() => navigate('/chat')}
+                className="btn-acessar"
+                onClick={() => navigate('/chat')}
               >
                 Acessar chat
               </button>
@@ -375,9 +432,9 @@ export default function Psicologo() {
   function renderHistorico() {
     if (consultasHistorico.length === 0) {
       return (
-          <div style={{ padding: '2rem', textAlign: 'center', color: '#665' }}>
-            <p>Você ainda não tem consultas finalizadas.</p>
-          </div>
+        <div style={{ padding: '2rem', textAlign: 'center', color: '#665' }}>
+          <p>Você ainda não tem consultas finalizadas.</p>
+        </div>
       );
     }
 
@@ -412,7 +469,7 @@ export default function Psicologo() {
             <div className="acoes">
               <button
                 className="btn-ver-detalhes"
-                onClick={() => abrirModalAnotacoes(consulta)}
+                onClick={() => handleAnotacao(consulta)}
               >
                 Anotações
               </button>
@@ -510,20 +567,20 @@ export default function Psicologo() {
                   <p style={{ margin: 0 }}>
                     Próximas consultas
                     {consultasProximas.length > 0 && (
-                      <span className = "badge">{consultasProximas.length}</span>
-                  )}
+                      <span className="badge">{consultasProximas.length}</span>
+                    )}
                   </p>
                 ),
                 conteudo: renderProximasConsultas,
               },
               "Solicitação de consultas": {
                 nome: (
-                    <p style={{ margin: 0 }}>
-                      Solicitação de consultas
-                      {solicitacoesPendentes.length > 0 && (
-                          <span className = "badge">{solicitacoesPendentes.length}</span>
-                      )}
-                    </p>
+                  <p style={{ margin: 0 }}>
+                    Solicitação de consultas
+                    {solicitacoesPendentes.length > 0 && (
+                      <span className="badge">{solicitacoesPendentes.length}</span>
+                    )}
+                  </p>
                 ),
                 conteudo: renderSolicitacoesConsultas,
               },
