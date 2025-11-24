@@ -6,7 +6,8 @@ import {
     getConsultasByPsicologo,
     getSolicitacoesByPsicologo,
     confirmarConsulta,
-    cancelarConsulta
+    cancelarConsulta, 
+    reagendarConsulta
 } from '../repository/consultaRepository.js';
 import { findPacienteByUsuarioId } from '../repository/pacienteRepository.js';
 import { findPsicologoByUsuarioId } from '../repository/psicologoRepository.js';
@@ -49,6 +50,36 @@ router.post('/agendar', async (req, res) => {
       res.status(500).json({ error: error.message });
   }
 });
+
+// Reagendar consulta
+router.put('/reagendar', async (req, res) => {
+  try {
+      const { usuarioId, agendamentoId, dataHora, } = req.body;
+
+      const paciente = await findPacienteByUsuarioId(usuarioId);
+
+      if (!paciente) {
+          return res.status(400).json({ error: 'Paciente não encontrado' });
+      }
+      
+      const novaConsulta = {
+          id: agendamentoId,
+          dataHora: new Date(dataHora)
+      };
+      
+      const isReagendado = await reagendarConsulta(novaConsulta);
+
+      if (isReagendado) {
+            res.json({ message: 'Consulta reagendada com sucesso!' });
+        } else {
+            res.status(404).json({ error: 'Consulta não encontrada' });
+        }
+  } catch (error) {
+      console.error("Erro ao reagendar:", error);
+      res.status(500).json({ error: error.message });
+  }
+});
+
 
 // Buscar consultas do paciente
 router.get('/paciente/:usuarioId', async (req, res) => {

@@ -14,6 +14,16 @@ export async function agendarConsulta(usuarioId, psicologoId, dataHora) {
     return resposta.data;
 }
 
+export async function reagendarConsulta(usuarioId, agendamentoId, dataHora) {
+    const resposta = await api.put('/consultas/reagendar', {
+        usuarioId,
+        agendamentoId,
+        dataHora,
+    });
+
+    return resposta.data;
+}
+
 // Buscar consultas do paciente
 export async function buscarConsultasPaciente(usuarioId) {
     const resposta = await api.get(`/consultas/paciente/${usuarioId}`);

@@ -13,6 +13,14 @@ export async function agendarConsulta(consulta) {
     return result.insertId;
 }
 
+export async function reagendarConsulta(consulta) {
+    const [result] = await pool.query(
+        'UPDATE agendamentos SET data_hora = ?, status = ? WHERE id = ?',
+        [consulta.dataHora, 'pendente', consulta.id]
+    );
+    return result.affectedRows > 0;
+}
+
 export async function getConsultasByPaciente(pacienteId) {
     const [rows] = await pool.query(`
         SELECT

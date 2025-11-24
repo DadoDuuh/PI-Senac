@@ -1,5 +1,5 @@
 import { Router } from 'express';
-import { createPsicologo, findPsicologoByUsuarioId, getAvailablePsicologos } from '../repository/psicologoRepository.js';
+import { createPsicologo, findPsicologoByUsuarioId, getAvailablePsicologos, findPsicologoById } from '../repository/psicologoRepository.js';
 import { findUsuarioByEmail, createUsuario } from '../repository/usuarioRepository.js';
 import bcrypt from 'bcrypt';
 import jwt from 'jsonwebtoken';
@@ -53,6 +53,16 @@ router.get('/disponiveis', async (req, resp) => {
     try {
         const psicologos = await getAvailablePsicologos();
         resp.status(200).json(psicologos);
+    }
+    catch (error) {
+        resp.status(500).send(error.message);
+    }
+})
+
+router.get('/:id', async (req, resp) => {
+    try {
+        const psicologo = await findPsicologoById(req.params.id);
+        resp.status(200).json(psicologo);
     }
     catch (error) {
         resp.status(500).send(error.message);

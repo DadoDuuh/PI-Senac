@@ -22,3 +22,8 @@ export async function psicologosDisponiveis() {
     const resposta = await api.get('/psicologos/disponiveis');
     return resposta.data;
 }
+
+export async function buscarPsicologoPorId(psicologoId) {
+    const resposta = await api.get(`/psicologos/${psicologoId}`);
+    return resposta.data;
+}
