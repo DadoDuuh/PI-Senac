@@ -27,3 +27,8 @@ export async function buscarPerfilPaciente(usuarioId) {
     const resposta = await api.get(`/pacientes/perfil/${usuarioId}`);
     return resposta.data;
 }
+
+export async function buscarPacientePorId(pacienteId) {
+    const resposta = await api.get(`/pacientes/${pacienteId}`);
+    return resposta.data;
+}

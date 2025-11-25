@@ -66,6 +66,10 @@ export default function Paciente() {
     (c.status === 'confirmado' && new Date(c.data_hora) <= new Date()) || c.status === 'cancelado'
   );
 
+  const handleChat = (consulta) => {
+    navigate("/chat", { state: { consulta } });
+  }
+
   const handleCancelar = async (agendamentoId) => {
     if (!window.confirm("Tem certeza que deseja cancelar esta consulta?")) {
       return;
@@ -217,7 +221,7 @@ export default function Paciente() {
 
               <button
                 className="btn-acessar-chat"
-                onClick={() => navigate("/chat")}
+                onClick={() => handleChat(consulta)}
               >
                 Acessar chat
               </button>
@@ -275,7 +279,8 @@ export default function Paciente() {
               </button>
               <button
                 className="btn-acessar-chat"
-                onClick={() => navigate('/chat')}
+                onClick={() =>
+                  handleChat(consulta)}
               >
                 Acessar chat
               </button>

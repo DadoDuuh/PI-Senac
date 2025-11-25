@@ -1,5 +1,5 @@
 import { Router } from 'express';
-import { createPaciente, findPacienteByUsuarioId } from '../repository/pacienteRepository.js';
+import { createPaciente, findPacienteByUsuarioId, findPacienteById } from '../repository/pacienteRepository.js';
 import { findUsuarioByEmail, createUsuario } from '../repository/usuarioRepository.js';
 import bcrypt from 'bcrypt';
 import jwt from 'jsonwebtoken';
@@ -51,5 +51,15 @@ router.get('/perfil/:id', async (req, res) => {
         res.status(500).json({ error: error.message });
     }
 });
+
+router.get('/:id', async (req, resp) => {
+    try {
+        const paciente = await findPacienteById(req.params.id);
+        resp.status(200).json(paciente);
+    }
+    catch (error) {
+        resp.status(500).send(error.message);
+    }
+})
 
 export default router;

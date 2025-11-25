@@ -7,6 +7,7 @@ import pacienteController from './src/controller/pacienteController.js';
 import psicologoController from './src/controller/psicologoController.js';
 import consultaController from './src/controller/consultaController.js';
 import anotacaoController from './src/controller/anotacaoController.js';
+import chatController from './src/controller/chatController.js';
 
 // Criação da aplicação Express
 const app = express();
@@ -28,6 +29,7 @@ app.use('/pacientes', pacienteController);
 app.use('/psicologos', psicologoController);
 app.use('/consultas', consultaController);
 app.use('/anotacoes', anotacaoController);
+app.use('/chat', chatController);
 
 // Rota 200 OK
 app.get('/health', (req, res) => {

@@ -52,6 +52,25 @@ CREATE TABLE anotacoes (
   FOREIGN KEY (consulta_id) REFERENCES agendamentos(id) ON DELETE CASCADE
 );
 
+CREATE TABLE chat(
+id	 INT PRIMARY KEY AUTO_INCREMENT,
+paciente_id 	 INT,
+psicologo_id INT,
+
+FOREIGN KEY (paciente_id) REFERENCES pacientes(id) ON DELETE CASCADE,
+FOREIGN KEY (psicologo_id) REFERENCES psicologos(id)
+ON DELETE CASCADE
+);
+
+CREATE TABLE mensagem(
+id 	INT PRIMARY KEY AUTO_INCREMENT,
+sender ENUM('paciente', 'psicologo')	NOT NULL,
+chat_id			INT,
+mensagem		VARCHAR(200),
+
+FOREIGN KEY (chat_id) REFERENCES chat (id)
+);
+
 -- DADOS MOCKADOS PARA TESTES
 
 -- Inserir usuários para os psicólogos (senha: "senha123")

@@ -23,7 +23,6 @@ export default function Login() {
 
     try {
       const resultado = await loginUsuario(email, senha);
-
       localStorage.setItem("token", resultado.token);
       localStorage.setItem("usuarioId", resultado.usuarioId);
       localStorage.setItem("tipo", resultado.tipo);

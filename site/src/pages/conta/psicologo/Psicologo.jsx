@@ -165,6 +165,11 @@ export default function Psicologo() {
     }
   };
 
+  const handleChat = (consulta) => {
+    navigate("/chat" , { state: { consulta } });
+  }
+
+
   const formatarDataHora = (dataHora) => {
     const data = new Date(dataHora);
     return data.toLocaleString("pt-BR", {
@@ -245,7 +250,7 @@ export default function Psicologo() {
 
               <button
                 className="btn-acessar-chat"
-                onClick={() => navigate("/chat")}
+                onClick={() => handleChat(consulta)}
               >
                 Acessar chat
               </button>

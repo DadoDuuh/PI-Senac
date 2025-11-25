@@ -1,42 +1,80 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
+import { useLocation } from "react-router-dom";
 import "./Chat.scss";
 import balaoChat from "../../assets/images/balao-chat-icon.svg";
 import denunciaIcon from "../../assets/images/denuncia-icon.svg";
 import ModalDenuncia from "../../components/modal-denuncia";
+import { buscarMensagens, enviarMensagem, criarChat, buscarChat, buscarConversas } from "../../api/chatApi.js";
+import { buscarPsicologoPorId } from "../../api/psicologoApi.js";
+import { buscarPacientePorId } from "../../api/pacienteApi.js";
 
 export default function ChatScreen() {
-  const [messages, setMessages] = useState([
-    {
-      id: 1,
-      sender: "me",
-      text: "Lorem ipsum dolor sit amet consectetur adipiscing elit",
-    },
-    {
-      id: 2,
-      sender: "me",
-      text: "Lorem ipsum dolor sit amet consectetur adipiscing elit",
-    },
-    {
-      id: 3,
-      sender: "other",
-      text: "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Curabitur placerat, felis eu cursus eleifend, turpis risus blandit dui, id pretium dui tellus quis nulla. Nulla pulvinar leo enim, eget pharetra massa pellentesque et. Pellentesque habitant morbi tristique senectus et netus et malesuada fames ac turpis egestas. Orci varius natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus. Aenean dictum enim neque, et tempor ipsum pretium sit amet.",
-    },
-    {
-      id: 4,
-      sender: "other",
-      text: "Lorem ipsum dolor sit amet consectetur adipiscing elit",
-    },
-  ]);
+  const { state } = useLocation();
+  const [chatId, setChatId] = useState();
+  const [chatData, setChatData] = useState();
+  const [usuarioTipo, setUsuarioTipo] = useState(localStorage.getItem("tipo"));
+  const [conversas, setConversas] = useState([]);
 
+  useEffect(() => {
+    async function carregar() {
+
+      const conversasBrutas = await buscarConversas(
+        usuarioTipo === "psicologo" ? null : state.consulta.paciente_id,
+        usuarioTipo === "psicologo" ? state.consulta.psicologo_id : null
+      );
+
+      const dados = await Promise.all(
+        conversasBrutas.map(async (c) => {
+          if (usuarioTipo === "psicologo") {
+            const paciente = await buscarPacientePorId(c.paciente_id);
+            return { ...c, nome: paciente.nome };
+          } else {
+            const psicologo = await buscarPsicologoPorId(c.psicologo_id);
+            return { ...c, nome: psicologo.nome };
+          }
+        })
+      );
+
+      setConversas(dados);
+
+      const chat = await buscarChat(state);
+
+      if (!chat || chat.length === 0) {
+        setChatData = await criarChat(state.consulta);
+        setChatId(chatData.id);
+      }
+
+      setChatId(chat.id);
+
+      const mensagens = await buscarMensagens(chat);
+
+      setMessages(mensagens);
+    }
+    carregar();
+  }, [state]);
+
+  const [messages, setMessages] = useState([]);
   const [input, setInput] = useState("");
   const [showModal, setShowModal] = useState(false);
 
-  const sendMessage = () => {
+  const sendMessage = async () => {
+
+    await enviarMensagem({
+      sender: usuarioTipo,
+      chat_id: chatId,
+      mensagem: input,
+    });
+
     if (!input.trim()) return;
+
     setMessages((prev) => [
       ...prev,
-      { id: Date.now(), sender: "me", text: input },
+      {
+        sender: usuarioTipo,
+        mensagem: input
+      },
     ]);
+
     setInput("");
   };
 
@@ -59,11 +97,21 @@ export default function ChatScreen() {
       </header>
 
       <div className="chat-wrapper">
-        <aside className="chat-sidebar">
+        {/* <aside className="chat-sidebar">
           <h3>Conversas</h3>
-          <div className="contact-item">Dra. Ana Silva</div>
-          <div className="contact-item selected">Dr. Carlos Mendes</div>
-        </aside>
+          {conversas.map((conversa) => (
+            <button
+              key={conversa.id}
+              className={`contact-item ${chatId === conversa.id ? "selected" : ""}`}
+              onClick={async () => {
+                setChatId(conversa.id);
+                const mensagens = await buscarMensagens(conversa);
+                setMessages(mensagens);
+              }}
+            >
+              {conversa.nome}</button>
+          ))}
+        </aside> */}
 
         <main className="chat-main">
           <header className="chat-header">
@@ -76,11 +124,15 @@ export default function ChatScreen() {
           </header>
 
           <div className="messages-area">
-            {messages.map((msg) => (
-              <div key={msg.id} className={`message ${msg.sender}`}>
-                {msg.text}
-              </div>
-            ))}
+            {messages.map((msg) => {
+              const classe = msg.sender === usuarioTipo ? "me" : "other";
+
+              return (
+                <div key={msg.id} className={`message ${classe}`}>
+                  {msg.mensagem}
+                </div>
+              )
+            })}
           </div>
 
           <footer className="chat-input-area">
